@@ -18,5 +18,14 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 //Route::post('oauth/token', '\Laravel\Passport\Http\Controllers\AccessTokenController@issueToken');
-Route::post('oauth/token', 'Auth\LoginController@issueToken');
+Route::post('oauth/token', '\Laravel\Passport\Http\Controllers\AccessTokenController@issueToken');
 //END ROUTES PASSPORT
+
+//USER ROUTES
+Route::resource('user','User\UserController',['except' => ['create','edit']]);
+Route::get('getUserLogged','User\UserController@getUserLogged');
+//END USER ROUTES
+
+//CANDIDATE RUTE
+Route::resource('candidate','Candidate\CandidateController',['except' => ['create','edit']]);
+//END CANDIDATE RUTE

@@ -20,6 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->tinyInteger('type')->default(\App\User::CAP);
             $table->text('configuration')->nullable();
+            $table->integer('party');
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();

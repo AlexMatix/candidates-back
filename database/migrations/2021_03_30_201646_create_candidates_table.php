@@ -26,6 +26,8 @@ class CreateCandidatesTable extends Migration
             $table->string('occupation');
             $table->string('elector_key');
             $table->string('postulate');
+            $table->string('type_postulate');
+            $table->integer('party');
 
             $table->timestamps();
         });

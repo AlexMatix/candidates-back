@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Candidate;
 use App\Candidate;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
+use Illuminate\Support\Facades\Auth;
 
 class CandidateController extends ApiController
 {
@@ -16,7 +17,9 @@ class CandidateController extends ApiController
 
     public function store(Request $request)
     {
+        $user = Auth::user();
         $candidate = new Candidate($request->all());
+        $candidate->party = $user->party;
         $candidate->save();
         return $this->showOne($candidate);
     }
@@ -46,6 +49,7 @@ class CandidateController extends ApiController
             'occupation',
             'elector_key',
             'postulate',
+            'type_postulate',
         ]));
     }
 

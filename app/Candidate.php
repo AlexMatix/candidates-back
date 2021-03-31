@@ -18,5 +18,7 @@ class Candidate extends Model
         'occupation',
         'elector_key',
         'postulate',
+        'type_postulate',
+        'party'
     ];
 }

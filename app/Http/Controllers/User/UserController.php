@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
-use App\structure;
 use App\User;
-use App\Utils\LogManagement;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
 use Illuminate\Support\Facades\Auth;

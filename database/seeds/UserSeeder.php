@@ -21,6 +21,7 @@ class UserSeeder extends Seeder
             'email' => 'admin@admin.com',
             'password' => bcrypt('secret'),
             'configuration' => '',
+            'party' => 0,
             'type' => \App\User::ADMIN
         ]);
     }
