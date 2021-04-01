@@ -59,4 +59,31 @@ class CandidateController extends ApiController
         $candidate->delete();
         return $this->showOne($candidate);
     }
+
+    public function validateElectorKey(Request $request)
+    {
+        $electorKey = $request->all()['electorKey'];
+        $id = $request->all()['id'] ?? null;
+
+        if (is_null($id)) {
+            $candidate = Candidate::where('elector_key', $electorKey)->first();
+        } else {
+            $candidate = Candidate::where('elector_key', $electorKey)
+                ->where('id', '<>', $id)
+                ->first();
+        }
+
+        if (is_null($candidate)) {
+            return $this->successResponse([
+                'result' => 'true',
+                'data' => $candidate
+            ], 200);
+        } else {
+            return $this->successResponse(
+                [
+                    'result' => 'false',
+                    'data' => $candidate
+                ], 200);
+        }
+    }
 }
