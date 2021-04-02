@@ -15,14 +15,14 @@ class CreateCandidatesTable extends Migration
     {
         Schema::create('candidates', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('patter_lastname');
+            $table->string('father_lastname');
             $table->string('mother_lastname');
             $table->string('name');
             $table->string('nickname')->nullable(); //CHICARCAS
             $table->string('roads'); //AVENIDA  Posible select
             $table->string('roads_name'); //LOS GIRASOLES
             $table->integer('outdoor_number'); //2155
-            $table->integer('interior_number'); //A
+            $table->integer('interior_number')->nullable(); //A
             $table->string('neighborhood'); //LA PAZ
             $table->string('zipcode'); // 72000
             $table->string('municipality'); //PUEBLA
@@ -45,8 +45,13 @@ class CreateCandidatesTable extends Migration
             $table->string('group_sexual_diversity'); //si - no
             $table->string('disabled_group'); //si - no
             $table->integer('party');
+            $table->integer('number');
+            $table->unsignedBigInteger('postulate_id'); //si - no
 
             $table->timestamps();
+
+            $table->foreign('postulate_id')->references('id')->on('postulates');
+
         });
     }
 

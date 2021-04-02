@@ -43,6 +43,7 @@ class UserController extends ApiController
             'password',
             'type',
             'name',
+            'party',
             'configuration',
         ]));
 
