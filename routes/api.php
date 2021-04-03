@@ -30,6 +30,10 @@ Route::get('getUserLogged','User\UserController@getUserLogged');
 Route::resource('candidate','Candidate\CandidateController',['except' => ['create','edit']]);
 Route::get('validate_elector_key', 'Candidate\CandidateController@validateElectorKey');
 //END CANDIDATE RUTE
+
 Route::get('getMunicipalities', 'Postulate\PostulateController@getMunicipalities');
 
+//POLITIC PARTY ROUTE
+Route::resource('politicParty','PoliticParty\PoliticPartyController',['only' => ['index']]);
+//END POLITIC PARTY ROUTE
 
