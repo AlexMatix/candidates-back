@@ -31,9 +31,11 @@ Route::resource('candidate','Candidate\CandidateController',['except' => ['creat
 Route::get('validate_elector_key', 'Candidate\CandidateController@validateElectorKey');
 //END CANDIDATE RUTE
 
-Route::get('getMunicipalities', 'Postulate\PostulateController@getMunicipalities');
-
 //POLITIC PARTY ROUTE
 Route::resource('politicParty','PoliticParty\PoliticPartyController',['only' => ['index']]);
 //END POLITIC PARTY ROUTE
 
+//POLITIC PARTY ROUTE
+Route::resource('postulate','Postulate\PostulateController',['only' => ['show', 'index']]);
+Route::get('getMunicipalities', 'Postulate\PostulateController@getMunicipalities');
+//END POLITIC PARTY ROUTE

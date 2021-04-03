@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class Candidate extends Model
 {
 
-    const DIPUTACION = 1;
-    const REGIDURIA = 2;
-    const SINDICATURA = 3;
-    const PRESIDENCIA = 4;
+    const DIPUTACION_RP= 1;
+    const DIPUTACION_MR = 2;
+    const REGIDURIA = 3;
+    const SINDICATURA = 4;
+    const PRESIDENCIA = 5;
 
     const OWNER = 1;
     const ALTERNATE = 2;
@@ -47,7 +48,7 @@ class Candidate extends Model
         'indigenous_group',
         'group_sexual_diversity',
         'disabled_group',
-        'party',
+        'politic_party_id',
         'postulate_id',
         'ine_check'
     ];
