@@ -69,6 +69,6 @@ class Candidate extends Model
     }
 
     public function copyCandidateIne(){
-        return $this->hasOne(CandidateIne::class);
+        return $this->hasOne(CandidateIne::class, 'origin_candidate_id');
     }
 }

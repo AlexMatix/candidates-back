@@ -6,7 +6,6 @@ use App\Candidate;
 use App\CandidateIne;
 use App\Http\Controllers\ApiController;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class CandidateIneController extends ApiController
 {
@@ -20,46 +19,19 @@ class CandidateIneController extends ApiController
         $rules = [
             "origin_candidate_id" => "required",
             "number_line" => "required",
-            "circumscription" => "required",
-            "locality" => "required",
             "demarcation" => "required",
-            "municipalities_council" => "required",
-            "campaign_slogan" => "required",
-            "list_number" => "required",
             "campaign" => "required",
             "curp" => "required",
             "curp_confirmation" => "required",
             "rfc" => "required",
             "phone_type" => "required",
-            "lada" => "required",
             "phone" => "required",
-            "extension" => "required",
             "email" => "required",
             "email_confirmation" => "required",
             "total_annual_income" => "required",
-            "salary_annual_income" => "required",
-            "financial_performances" => "required",
-            "annual_profit_professional_activity" => "required",
-            "annual_real_estate_lease_earnings" => "required",
-            "professional_services_fees" => "required",
-            "other_income" => "required",
             "total_annual_expenses" => "required",
-            "personal_expenses" => "required",
-            "real_estate_payments" => "required",
-            "debt_payments" => "required",
-            "loss_personal_activity" => "required",
-            "other_expenses" => "required",
-            "property" => "required",
-            "vehicles" => "required",
-            "other_movable_property" => "required",
-            "bank_accounts" => "required",
-            "other_assets" => "required",
-            "payment_debt_amount" => "required",
-            "other_passives" => "required",
-            "others" => "exclude_if:type_postulate," . CandidateIne::OWNER . "|required",
-            "considerations" => "exclude_if:type_postulate," . CandidateIne::OWNER . "|required",
         ];
-        $this->validation($request, $rules);
+        $this->validate($request, $rules);
 
         $candidateIne = CandidateIne::create($request->all());
 
@@ -75,6 +47,14 @@ class CandidateIneController extends ApiController
             }
         }
 
+        if($candidate->type_postulate == Candidate::ALTERNATE){
+            $candidate_ine_alternate = CandidateIne::where('origin_candidate_id', $candidate->candidate_id)->first();
+            if(!is_null($candidate_ine_alternate)){
+                $candidateIne->candidate_ine_id = $candidate_ine_alternate->id;
+                $candidateIne->save();
+            }
+        }
+
         return $this->showOne($candidateIne);
     }
 
@@ -82,6 +62,9 @@ class CandidateIneController extends ApiController
     {
         $candidateIne->postulate;
         $candidateIne->politicParty;
+        $candidateIne->owner;
+        $candidateIne->alternate;
+        $candidateIne->originCandidate;
         return $this->showOne($candidateIne);
     }
 
@@ -102,6 +85,7 @@ class CandidateIneController extends ApiController
         $candidate->ine_check = false;
         $candidate->save();
 
+        $candidateIne->alternate()->delete();
         $candidateIne->delete();
         return $this->showMessage('Record deleted successfully');
     }

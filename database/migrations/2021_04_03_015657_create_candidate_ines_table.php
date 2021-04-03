@@ -37,52 +37,52 @@ class CreateCandidateInesTable extends Migration
             $table->integer('residence_time_year'); //2
             $table->integer('residence_time_month'); //1
             $table->string('occupation'); //EMPLEADA
-            $table->string('re-election'); //si - no
+            $table->string('re_election'); //si - no
             $table->integer('postulate');
             $table->integer('type_postulate');
             $table->string('indigenous_group'); //si - no
             $table->string('group_sexual_diversity'); //si - no
             $table->string('disabled_group'); //si - no
 
-            $table->string('number_line');
-            $table->string('circumscription');
-            $table->string('locality');
-            $table->string('demarcation');
-            $table->string('municipalities_council');
-            $table->string('campaign_slogan');
-            $table->string('list_number');
-            $table->string('campaign');
-            $table->string('curp');
-            $table->string('curp_confirmation');
-            $table->string('rfc');
-            $table->string('phone_type');
-            $table->string('lada');
+            $table->integer('number_line');
+            $table->integer('circumscription')->nullable();
+            $table->integer('locality')->nullable();
+            $table->integer('demarcation');
+            $table->integer('municipalities_council')->nullable();
+            $table->string('campaign_slogan',500)->nullable();
+            $table->integer('list_number')->nullable();
+            $table->integer('campaign');
+            $table->string('curp',18);
+            $table->string('curp_confirmation',18);
+            $table->string('rfc',13);
+            $table->integer('phone_type');
+            $table->integer('lada')->nullable();
             $table->string('phone');
-            $table->string('extension');
+            $table->string('extension')->nullable();
             $table->string('email');
             $table->string('email_confirmation');
-            $table->string('total_annual_income');
-            $table->string('salary_annual_income');
-            $table->string('financial_performances');
-            $table->string('annual_profit_professional_activity');
-            $table->string('annual_real_estate_lease_earnings');
-            $table->string('professional_services_fees');
-            $table->string('other_income');
-            $table->string('total_annual_expenses');
-            $table->string('personal_expenses');
-            $table->string('real_estate_payments');
-            $table->string('debt_payments');
-            $table->string('loss_personal_activity');
-            $table->string('other_expenses');
-            $table->string('property');
-            $table->string('vehicles');
-            $table->string('other_movable_property');
-            $table->string('bank_accounts');
-            $table->string('other_assets');
-            $table->string('payment_debt_amount');
-            $table->string('other_passives');
-            $table->string('others');
-            $table->string('considerations');
+            $table->decimal('total_annual_income',52,2);
+            $table->decimal('salary_annual_income',52,2)->nullable();
+            $table->decimal('financial_performances',52,2)->nullable();
+            $table->decimal('annual_profit_professional_activity',52,2)->nullable();
+            $table->decimal('annual_real_estate_lease_earnings',52,2)->nullable();
+            $table->decimal('professional_services_fees',52,2)->nullable();
+            $table->decimal('other_income',52,2)->nullable();
+            $table->decimal('total_annual_expenses',52,2);
+            $table->decimal('personal_expenses',52,2)->nullable();
+            $table->decimal('real_estate_payments',52,2)->nullable();
+            $table->decimal('debt_payments',52,2)->nullable();
+            $table->decimal('loss_personal_activity',52,2)->nullable();
+            $table->decimal('other_expenses',52,2)->nullable();
+            $table->decimal('property',52,2)->nullable();
+            $table->decimal('vehicles',52,2)->nullable();
+            $table->decimal('other_movable_property',52,2)->nullable();
+            $table->decimal('bank_accounts',52,2)->nullable();
+            $table->decimal('other_assets',52,2)->nullable();
+            $table->decimal('payment_debt_amount',52,2)->nullable();
+            $table->decimal('other_passives',52,2)->nullable();
+            $table->string('others')->nullable();
+            $table->string('considerations')->nullable();
             $table->unsignedBigInteger('candidate_id')->nullable();
 
             $table->unsignedBigInteger('postulate_id')->nullable(); //si - no

@@ -147,6 +147,7 @@ class CandidateController extends ApiController
 
     public function destroy(Candidate $candidate)
     {
+        $candidate->copyCandidateIne()->delete();
         $candidate->delete();
         return $this->showOne($candidate);
     }

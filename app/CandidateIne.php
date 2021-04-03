@@ -33,7 +33,7 @@ class CandidateIne extends Model
         'residence_time_year',
         'residence_time_month',
         'occupation',
-        're-election',
+        're_election',
         'postulate',
         'type_postulate',
         'indigenous_group',
@@ -41,7 +41,6 @@ class CandidateIne extends Model
         'disabled_group',
         'postulate_id',
         'politic_party_id',
-        'number',
         'candidate_id',
         'origin_candidate_id',
         'candidate_ine_id',
@@ -96,7 +95,7 @@ class CandidateIne extends Model
     }
 
     public function owner(){
-        return $this->belongsTo(CandidateIne::class);
+        return $this->belongsTo(CandidateIne::class,'candidate_ine_id');
     }
 
     public function alternate(){
