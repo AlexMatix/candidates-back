@@ -50,6 +50,7 @@ class Candidate extends Model
         'disabled_group',
         'politic_party_id',
         'postulate_id',
+        'candidate_id',
         'ine_check'
     ];
 

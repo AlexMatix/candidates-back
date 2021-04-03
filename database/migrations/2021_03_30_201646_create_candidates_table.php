@@ -47,13 +47,14 @@ class CreateCandidatesTable extends Migration
             $table->integer('party');
             $table->boolean('ine_check')->nullable();
             $table->unsignedBigInteger('postulate_id'); //si - no
-            $table->unsignedBigInteger('candidate_id'); //si - no
+            $table->unsignedBigInteger('politic_party_id'); //si - no
+            $table->unsignedBigInteger('candidate_id')->nullable(); //si - no
 
             $table->timestamps();
 
             $table->foreign('postulate_id')->references('id')->on('postulates');
             $table->foreign('candidate_id')->references('id')->on('candidates');
-
+            $table->foreign('politic_party_id')->references('id')->on('politic_parties');
         });
     }
 
