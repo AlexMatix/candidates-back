@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\Postulate;
 
+use App\Candidate;
+use App\PoliticParty;
 use App\Postulate;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
+use Illuminate\Support\Facades\Auth;
 
 class PostulateController extends ApiController
 {
@@ -16,14 +19,32 @@ class PostulateController extends ApiController
 
     public function show(Postulate $postulate)
     {
-        return $this->showOne($postulate);
+        $user = Auth::user();
+        $politic_party = PoliticParty::findOrFail($user->politic_party_id);
+
+        return $this->showList([
+            'presidency' => Candidate::where([
+                'postulate_id', '=', $postulate->id,
+                'politic_party_id', '=', $politic_party->id,
+                'postulate', '=', Postulate::PRESIDENCIA,
+            ])->get(),
+
+            'regidurias' => Candidate::where([
+                'postulate_id', '=', $postulate->id,
+                'politic_party_id', '=', $politic_party->id,
+                'postulate', '=', Postulate::REGIDURIA,
+            ])->get(
+
+            ),
+            'sindicaturas' => Candidate::where([
+                'postulate_id', '=', $postulate->id,
+                'politic_party_id', '=', $politic_party->id,
+                'postulate', '=', Postulate::SINDICATURA,
+            ])->get(),
+
+        ]);
     }
 
-
-    public function update(Request $request, Postulate $postulate)
-    {
-
-    }
 
     public function getMunicipalities()
     {
@@ -31,8 +52,11 @@ class PostulateController extends ApiController
         $districts = [];
         $municipalities = [];
         foreach ($postulates as $postulate) {
-            $districts[] = $postulate->district;
-            $municipalities[$postulate->district][$postulate->id] = [
+            if (!in_array($postulate->district, $districts)) {
+                $districts[] = $postulate->district;
+            }
+
+            $municipalities[$postulate->district][] = [
                 'name' => $postulate->municipality,
                 'id' => $postulate->id,
                 'presidency' => $postulate->presidency,
@@ -40,9 +64,8 @@ class PostulateController extends ApiController
                 'sindicaturas' => $postulate->sindicaturas,
             ];
         }
-
         return $this->showList([
-            'districts' => $districts,
+            'districts' => array_unique($districts, SORT_REGULAR),
             'municipalities' => $municipalities
         ]);
 

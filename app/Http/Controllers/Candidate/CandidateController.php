@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Candidate;
 
 use App\Candidate;
+use App\PoliticParty;
 use App\Postulate;
 use App\User;
 use Illuminate\Http\Request;
@@ -15,10 +16,12 @@ class CandidateController extends ApiController
     public function index()
     {
         $user = Auth::user();
+        $politic_party = PoliticParty::findOrFail($user->politic_party_id);
+
         if ($user->type === User::ADMIN) {
             return $this->showAll(Candidate::all());
         } else {
-            return $this->showList(Candidate::where('party', $user->party)->get());
+            return $this->showList(Candidate::where('party', $politic_party->id)->get());
         }
     }
 
@@ -27,86 +30,53 @@ class CandidateController extends ApiController
         $user = Auth::user();
 
         if ($user->type === User::CAP) {
-
             $history = Postulate::findOrFail($request->has('postulate_id'));
-            $save = false;
+            $politic_party = PoliticParty::findOrFail($user->politic_party_id);
+            $records = [];
 
-            switch ($request->has('postulate')) {
-//                case Candidate::DIPUTACION :
-//                    $countOwner = $this->checkSum($history->diputacion_owner_count, $history->);
-//                    $countAlternate = $history->diputacion_alternate_count;
-//                    break;
-
-                case Candidate::REGIDURIA :
-                    if ($request->has('type_postulate') === Candidate::OWNER && $this->checkSum($history->regidurias_owner_count, $history->regidurias)) {
-                        $history->regidurias_owner_count++;
-                        $history->save();
-                        $save = true;
-                    }
-
-                    if ($request->has('type_postulate') === Candidate::ALTERNATE && $this->checkSum($history->regidurias_alternate_count, $history->regidurias)) {
-                        $history->regidurias_alternate_count++;
-                        $history->save();
-                        $save = true;
-                    }
-                    break;
-
-                case Candidate::SINDICATURA :
-                    if ($request->has('type_postulate') === Candidate::OWNER && $this->checkSum($history->sindicaturas_owner_count, $history->sindicaturas)) {
-                        $history->sindicaturas_owner_count++;
-                        $history->save();
-                        $save = true;
-                    }
-
-                    if ($request->has('type_postulate') === Candidate::ALTERNATE && $this->checkSum($history->sindicaturas_alternate_count, $history->sindicaturas)) {
-                        $history->sindicaturas_alternate_count++;
-                        $history->save();
-                        $save = true;
-                    }
-
-                    break;
-
-                case Candidate::PRESIDENCIA :
-                    if ($request->has('type_postulate') === Candidate::OWNER && $this->checkSum($history->presidency_owner_count, $history->presidency)) {
-                        $history->presidency_owner_count++;
-                        $history->save();
-                        $save = true;
-                    }
-
-                    if ($request->has('type_postulate') === Candidate::ALTERNATE && $this->checkSum($history->presidency_alternate_count, $history->presidency)) {
-                        $history->presidency_alternate_count++;
-                        $history->save();
-                        $save = true;
-                    }
-                    break;
-
-                default:
-                    return $this->showMessage('postulate not found', 404);
+            if ($request->has('postulate') === Candidate::REGIDURIA) {
+                $records = Candidate::where([
+                    ['postulate_id', '=', $history->id],
+                    ['politic_party_id', '=', $politic_party->id],
+                    ['postulate', '=', Candidate::REGIDURIA]
+                ])->select('COUNT(id)')
+                    ->get();
+                $limitRecords = $history->regidurias * 2;
             }
 
-            if($save){
-                $candidate = new Candidate($request->all());
-                $candidate->party = $user->party;
-                $candidate->save();
-                return $this->showOne($candidate);
-            }else{
-                return $this->errorResponse('No se puede generar mas registros de este tipo para este municipio', 409);
+            if ($request->has('postulate') === Candidate::SINDICATURA) {
+                $records = Candidate::where([
+                    ['postulate_id', '=', $history->id],
+                    ['politic_party_id', '=', $politic_party->id],
+                    ['postulate', '=', Candidate::SINDICATURA]
+
+                ])->select('COUNT(id)')
+                    ->get();
+                $limitRecords = $history->sindicaturas * 2;
             }
 
+            if ($request->has('postulate') === Candidate::PRESIDENCIA) {
+                $records = Candidate::where([
+                    ['postulate_id', '=', $history->id],
+                    ['politic_party_id', '=', $politic_party->id],
+                    ['postulate', '=', Candidate::PRESIDENCIA]
+                ])->select('COUNT(id)')
+                    ->get();
+                $limitRecords = $history->presidency * 2;
+            }
+
+            if ($records < $limitRecords){
+                $newCandidate = new Candidate($request->all());
+                $newCandidate->politic_party_id = $politic_party->id;
+                $newCandidate->save();
+
+            }
 
         } else {
             return $this->showMessage('El administrador no puede dar de alta registros', 409);
         }
     }
 
-    private function checkSum($postulate, $total)
-    {
-        if (($postulate + 1) > $total) {
-            return false;
-        }
-
-        return true;
-    }
 
     public function show(Candidate $candidate)
     {

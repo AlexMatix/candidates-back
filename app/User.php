@@ -55,7 +55,7 @@ class User extends Authenticatable
     ];
 
 
-    public function political_party()
+    public function politic_party()
     {
         return $this->hasOne(PoliticParty::class);
     }
