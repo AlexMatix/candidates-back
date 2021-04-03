@@ -31,7 +31,7 @@ class User extends Authenticatable
         'email',
         'password',
         'type',
-        'party',
+        'politic_party_id',
         'configuration',
     ];
 
@@ -53,4 +53,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'configuration' => 'array',
     ];
+
+
+    public function political_party()
+    {
+        return $this->hasOne(PoliticParty::class);
+    }
 }
