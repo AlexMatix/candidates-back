@@ -33,43 +33,62 @@ class CandidateController extends ApiController
             $history = Postulate::findOrFail($request->has('postulate_id'));
             $politic_party = PoliticParty::findOrFail($user->politic_party_id);
             $records = [];
+            $limitRecords = 0;
 
-            if ($request->has('postulate') === Candidate::REGIDURIA) {
+            if ($request->has('postulate') == Candidate::REGIDURIA) {
                 $records = Candidate::where([
                     ['postulate_id', '=', $history->id],
                     ['politic_party_id', '=', $politic_party->id],
                     ['postulate', '=', Candidate::REGIDURIA]
-                ])->select('COUNT(id)')
-                    ->get();
+                ])->get();
+                $records = $records->count();
                 $limitRecords = $history->regidurias * 2;
             }
 
-            if ($request->has('postulate') === Candidate::SINDICATURA) {
+            if ($request->has('postulate') == Candidate::SINDICATURA) {
                 $records = Candidate::where([
                     ['postulate_id', '=', $history->id],
                     ['politic_party_id', '=', $politic_party->id],
                     ['postulate', '=', Candidate::SINDICATURA]
 
-                ])->select('COUNT(id)')
-                    ->get();
+                ])->get();
+                $records = $records->count();
                 $limitRecords = $history->sindicaturas * 2;
             }
 
-            if ($request->has('postulate') === Candidate::PRESIDENCIA) {
+            if ($request->has('postulate') == Candidate::PRESIDENCIA) {
                 $records = Candidate::where([
                     ['postulate_id', '=', $history->id],
                     ['politic_party_id', '=', $politic_party->id],
                     ['postulate', '=', Candidate::PRESIDENCIA]
-                ])->select('COUNT(id)')
-                    ->get();
+                ])->get();
+                $records = $records->count();
                 $limitRecords = $history->presidency * 2;
             }
 
-            if ($records < $limitRecords){
+            if ($request->has('postulate') == Candidate::DIPUTACION_RP) {
+
+                $records = Candidate::where([
+                    ['politic_party_id', '=', $politic_party->id],
+                    ['postulate', '=', Candidate::DIPUTACION_RP]
+                ])->get();
+                $records = $records->count();
+                $limitRecords = Candidate::DIPUTACION_RP;
+            }
+
+            if ($request->has('postulate') == Candidate::DIPUTACION_MR) {
+                $records = Candidate::where([
+                    ['politic_party_id', '=', $politic_party->id],
+                    ['postulate', '=', Candidate::TOTAL_DIPUTACION_MR]
+                ])->get();
+                $records = $records->count();
+                $limitRecords = Candidate::TOTAL_DIPUTACION_MR;
+            }
+            if ($records < $limitRecords) {
                 $newCandidate = new Candidate($request->all());
                 $newCandidate->politic_party_id = $politic_party->id;
                 $newCandidate->save();
-
+                return $this->showOne($newCandidate);
             }
 
         } else {
@@ -115,7 +134,7 @@ class CandidateController extends ApiController
             'residence_time_year',
             'residence_time_month',
             'occupation',
-            're-election',
+            're_election',
             'postulate',
             'type_postulate',
             'indigenous_group',

@@ -15,29 +15,30 @@ class PoliticalPartySeeder extends Seeder
         DB::table('politic_parties')->truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS = 1;');
 
-        \App\PoliticParty::insert(
-            [
-                'id' => 1,
-                'name' => 'MORENA'
-            ],
-            [
-                'id' => 2,
-                'name' => 'VERDE'
-            ],
-            [
-                'id' => 3,
-                'name' => 'PT'
-            ],
-            [
-                'id' => 4,
-                'name' => 'PSI'
-            ],
-            [
-                'id' => 5,
-                'name' => 'MORENA/PT'
+        \App\PoliticParty::insert([
+                [
+                    'id' => 1,
+                    'name' => 'MORENA'
+                ],
+                [
+                    'id' => 2,
+                    'name' => 'VERDE'
+                ],
+                [
+                    'id' => 3,
+                    'name' => 'PT'
+                ],
+                [
+                    'id' => 4,
+                    'name' => 'PSI'
+                ],
+                [
+                    'id' => 5,
+                    'name' => 'MORENA/PT'
+                ]
             ]
-        );
 
+        );
 
 
     }

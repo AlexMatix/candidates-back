@@ -12,6 +12,8 @@ class Candidate extends Model
     const REGIDURIA = 3;
     const SINDICATURA = 4;
     const PRESIDENCIA = 5;
+    const TOTAL_DIPUTACION_RP = 15;
+    const TOTAL_DIPUTACION_MR = 26;
 
     const OWNER = 1;
     const ALTERNATE = 2;
@@ -42,7 +44,7 @@ class Candidate extends Model
         'residence_time_year',
         'residence_time_month',
         'occupation',
-        're-election',
+        're_election',
         'postulate',
         'type_postulate',
         'indigenous_group',

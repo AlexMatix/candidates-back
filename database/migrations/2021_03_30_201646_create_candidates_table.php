@@ -38,13 +38,12 @@ class CreateCandidatesTable extends Migration
             $table->integer('residence_time_year'); //2
             $table->integer('residence_time_month'); //1
             $table->string('occupation'); //EMPLEADA
-            $table->string('re-election'); //si - no
+            $table->string('re_election'); //si - no
             $table->integer('postulate');
             $table->integer('type_postulate');
             $table->string('indigenous_group'); //si - no
             $table->string('group_sexual_diversity'); //si - no
             $table->string('disabled_group'); //si - no
-            $table->integer('party');
             $table->boolean('ine_check')->nullable();
             $table->unsignedBigInteger('postulate_id'); //si - no
             $table->unsignedBigInteger('politic_party_id'); //si - no
