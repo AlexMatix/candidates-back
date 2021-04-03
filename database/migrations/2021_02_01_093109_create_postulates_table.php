@@ -21,17 +21,6 @@ class CreatePostulatesTable extends Migration
             $table->integer('presidency');
             $table->integer('regidurias');
             $table->integer('sindicaturas');
-
-            $table->integer('presidency_owner_count')->default(0);
-            $table->integer('regidurias_owner_count')->default(0);
-            $table->integer('sindicaturas_owner_count')->default(0);
-            $table->integer('diputacion_owner_count')->default(0);
-
-            $table->integer('presidency_alternate_count')->default(0);
-            $table->integer('regidurias_alternate_count')->default(0);
-            $table->integer('sindicaturas_alternate_count')->default(0);
-            $table->integer('diputacion_alternate_count')->default(0);
-
             $table->integer('total');
             $table->timestamps();
         });

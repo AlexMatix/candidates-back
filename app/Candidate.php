@@ -49,7 +49,7 @@ class Candidate extends Model
         'disabled_group',
         'party',
         'postulate_id',
-        'number'
+        'ine_check'
     ];
 
     public function postulate(){

@@ -43,7 +43,6 @@ class CreateCandidateInesTable extends Migration
             $table->string('indigenous_group'); //si - no
             $table->string('group_sexual_diversity'); //si - no
             $table->string('disabled_group'); //si - no
-            $table->integer('number');
 
             $table->string('number_line');
             $table->string('circumscription');
