@@ -44,13 +44,53 @@ class CreateCandidateInesTable extends Migration
             $table->string('group_sexual_diversity'); //si - no
             $table->string('disabled_group'); //si - no
             $table->integer('number');
-            $table->unsignedBigInteger('postulate_id')->nullable(true); //si - no
-            $table->unsignedBigInteger('politic_party_id');
 
-            $table->timestamps();
+            $table->string('number_line');
+            $table->string('circumscription');
+            $table->string('locality');
+            $table->string('demarcation');
+            $table->string('municipalities_council');
+            $table->string('campaign_slogan');
+            $table->string('list_number');
+            $table->string('campaign');
+            $table->string('curp');
+            $table->string('curp_confirmation');
+            $table->string('rfc');
+            $table->string('phone_type');
+            $table->string('lada');
+            $table->string('phone');
+            $table->string('extension');
+            $table->string('email');
+            $table->string('email_confirmation');
+            $table->string('total_annual_income');
+            $table->string('salary_annual_income');
+            $table->string('financial_performances');
+            $table->string('annual_profit_professional_activity');
+            $table->string('annual_real_estate_lease_earnings');
+            $table->string('professional_services_fees');
+            $table->string('other_income');
+            $table->string('total_annual_expenses');
+            $table->string('personal_expenses');
+            $table->string('real_estate_payments');
+            $table->string('debt_payments');
+            $table->string('loss_personal_activity');
+            $table->string('other_expenses');
+            $table->string('property');
+            $table->string('vehicles');
+            $table->string('other_movable_property');
+            $table->string('bank_accounts');
+            $table->string('other_assets');
+            $table->string('payment_debt_amount');
+            $table->string('other_passives');
+            $table->string('others');
+            $table->string('considerations');
+
+            $table->unsignedBigInteger('postulate_id')->nullable(); //si - no
+            $table->unsignedBigInteger('politic_party_id');
 
             $table->foreign('postulate_id')->references('id')->on('postulates');
             $table->foreign('politic_party_id')->references('id')->on('politic_parties');
+            $table->timestamps();
         });
     }
 
