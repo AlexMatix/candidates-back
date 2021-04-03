@@ -21,7 +21,7 @@ class CandidateController extends ApiController
         if ($user->type === User::ADMIN) {
             return $this->showAll(Candidate::all());
         } else {
-            return $this->showList(Candidate::where('party', $politic_party->id)->get());
+            return $this->showList(Candidate::where('politic_party_id', $politic_party->id)->get());
         }
     }
 
@@ -88,7 +88,16 @@ class CandidateController extends ApiController
                 $newCandidate = new Candidate($request->all());
                 $newCandidate->politic_party_id = $politic_party->id;
                 $newCandidate->save();
-                return $this->showOne($newCandidate);
+                $newAlternate = new Candidate($request->get('alternate'));
+                $newAlternate->candidate_id = $newCandidate->id;
+                $newAlternate->politic_party_id = $politic_party->id;
+                $newAlternate->postulate_id = $newCandidate->postulate_id;
+                $newAlternate->postulate = Candidate::ALTERNATE;
+                $newAlternate->save();
+                return $this->showList([
+                    'owner' => $newCandidate,
+                    'alternate' => $newAlternate,
+                ]);
             }
 
         } else {
