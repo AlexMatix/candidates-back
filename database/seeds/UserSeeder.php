@@ -21,7 +21,7 @@ class UserSeeder extends Seeder
             'email' => 'admin@admin.com',
             'password' => bcrypt('secret'),
             'configuration' => '',
-            'political_party_id' => 1,
+            'politic_party_id' => 1,
             'type' => \App\User::ADMIN
         ]);
     }

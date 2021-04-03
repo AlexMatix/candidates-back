@@ -10,4 +10,6 @@ class PoliticParty extends Model
       'id',
       'name'
     ];
+
+    public $timestamps = false;
 }

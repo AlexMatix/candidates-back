@@ -43,9 +43,9 @@ class CreateCandidateInesTable extends Migration
             $table->string('indigenous_group'); //si - no
             $table->string('group_sexual_diversity'); //si - no
             $table->string('disabled_group'); //si - no
-            $table->integer('number');
             $table->unsignedBigInteger('postulate_id')->nullable(true); //si - no
             $table->unsignedBigInteger('politic_party_id');
+            $table->boolean('ine_check')->nullable();
 
             $table->timestamps();
 

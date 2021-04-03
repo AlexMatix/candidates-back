@@ -20,11 +20,14 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->tinyInteger('type')->default(\App\User::CAP);
             $table->text('configuration')->nullable();
-            $table->integer('politic_party_id');
+            $table->unsignedBigInteger('politic_party_id');
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
+            $table->foreign('politic_party_id')->references('id')->on('politic_parties');
         });
+
+
     }
 
     /**
