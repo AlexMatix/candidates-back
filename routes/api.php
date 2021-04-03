@@ -37,3 +37,7 @@ Route::get('getMunicipalities', 'Postulate\PostulateController@getMunicipalities
 Route::resource('politicParty','PoliticParty\PoliticPartyController',['only' => ['index']]);
 //END POLITIC PARTY ROUTE
 
+//CANDIDATE ROUTE
+Route::resource('candidateIne','CandidateIne\CandidateIneController',['except' => ['create','edit']]);
+//END CANDIDATE ROUTE
+

@@ -42,6 +42,9 @@ class CandidateIne extends Model
         'postulate_id',
         'politic_party_id',
         'number',
+        'candidate_id',
+        'origin_candidate_id',
+        'candidate_ine_id',
 
         'number_line',
         'circumscription',
@@ -90,5 +93,17 @@ class CandidateIne extends Model
 
     public function politicParty(){
         return $this->belongsTo(PoliticParty::class);
+    }
+
+    public function owner(){
+        return $this->belongsTo(CandidateIne::class);
+    }
+
+    public function alternate(){
+        return $this->hasOne(CandidateIne::class);
+    }
+
+    public function originCandidate(){
+        return $this->belongsTo(Candidate::class);
     }
 }

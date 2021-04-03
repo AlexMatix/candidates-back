@@ -83,12 +83,17 @@ class CreateCandidateInesTable extends Migration
             $table->string('other_passives');
             $table->string('others');
             $table->string('considerations');
+            $table->unsignedBigInteger('candidate_id')->nullable();
 
             $table->unsignedBigInteger('postulate_id')->nullable(); //si - no
             $table->unsignedBigInteger('politic_party_id');
+            $table->unsignedBigInteger('candidate_ine_id')->nullable();
+            $table->unsignedBigInteger('origin_candidate_id');
 
             $table->foreign('postulate_id')->references('id')->on('postulates');
             $table->foreign('politic_party_id')->references('id')->on('politic_parties');
+            $table->foreign('candidate_ine_id')->references('id')->on('candidate_ines');
+            $table->foreign('origin_candidate_id')->references('id')->on('candidates');
             $table->timestamps();
         });
     }

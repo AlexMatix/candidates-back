@@ -55,4 +55,16 @@ class Candidate extends Model
     public function postulate(){
         return $this->belongsTo(Postulate::class);
     }
+
+    public function owner(){
+        return $this->belongsTo(Candidate::class);
+    }
+
+    public function alternate(){
+        return $this->hasOne(Candidate::class);
+    }
+
+    public function copyCandidateIne(){
+        return $this->hasOne(CandidateIne::class);
+    }
 }
