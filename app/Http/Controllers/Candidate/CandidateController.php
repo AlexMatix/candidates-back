@@ -92,7 +92,8 @@ class CandidateController extends ApiController
                 $newAlternate->candidate_id = $newCandidate->id;
                 $newAlternate->politic_party_id = $politic_party->id;
                 $newAlternate->postulate_id = $newCandidate->postulate_id;
-                $newAlternate->postulate = Candidate::ALTERNATE;
+                $newAlternate->postulate = $newCandidate->postulate;
+                $newAlternate->type_postulate = Candidate::ALTERNATE;
                 $newAlternate->save();
                 return $this->showList([
                     'owner' => $newCandidate,
@@ -187,4 +188,24 @@ class CandidateController extends ApiController
                 ], 200);
         }
     }
+    public function validateOCR(Request $request)
+    {
+        $ocr = $request->all()['ocr'];
+        $id = $request->all()['id'] ?? null;
+
+        if (is_null($id)) {
+            $candidate = Candidate::where('ocr', $ocr)->first();
+        } else {
+            $candidate = Candidate::where('ocr', $ocr)
+                ->where('id', '<>', $id)
+                ->first();
+        }
+
+        if (is_null($candidate)) {
+            return $this->successResponse('true', 200);
+        } else {
+            return $this->successResponse('false', 200);
+        }
+    }
+
 }

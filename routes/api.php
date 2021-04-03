@@ -29,6 +29,7 @@ Route::get('getUserLogged','User\UserController@getUserLogged');
 //CANDIDATE RUTE
 Route::resource('candidate','Candidate\CandidateController',['except' => ['create','edit']]);
 Route::get('validate_elector_key', 'Candidate\CandidateController@validateElectorKey');
+Route::get('validate_elector_ocr', 'Candidate\CandidateController@validateOCR');
 //END CANDIDATE RUTE
 
 //POLITIC PARTY ROUTE
