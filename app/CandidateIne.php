@@ -46,6 +46,7 @@ class CandidateIne extends Model
         'candidate_ine_id',
 
         'number_line',
+        'number_list',
         'circumscription',
         'locality',
         'demarcation',

@@ -33,6 +33,7 @@ class PostulateSeeder extends Seeder
             $postulateObj->regidurias = $postulateExplode[4];
             $postulateObj->sindicaturas = $postulateExplode[5];
             $postulateObj->total = $postulateExplode[6];
+            $postulateObj->municipality_key = $postulateExplode[7];
             $postulateObj->save();
         }
     }
