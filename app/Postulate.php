@@ -9,6 +9,7 @@ class Postulate extends Model
     protected $fillable = [
         'id',
         'district',
+        'municipality_key',
         'municipality',
         'total_population',
         'presidency',

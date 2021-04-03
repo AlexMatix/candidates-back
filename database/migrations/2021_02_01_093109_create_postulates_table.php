@@ -16,6 +16,7 @@ class CreatePostulatesTable extends Migration
         Schema::create('postulates', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('district');
+            $table->string('municipality_key');
             $table->string('municipality');
             $table->string('total_population');
             $table->integer('presidency');
