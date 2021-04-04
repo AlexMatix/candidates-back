@@ -19,8 +19,6 @@ class Candidate extends Model
     const OWNER = 1;
     const ALTERNATE = 2;
 
-    const DRP = 1;
-
     protected $fillable = [
         'id',
         'father_lastname',

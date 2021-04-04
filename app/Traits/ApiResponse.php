@@ -63,5 +63,9 @@ trait ApiResponse{
         }
         return $collection;
     }
+
+    protected function downloadFile($file){
+        return response()->download($file);
+    }
 }
 
