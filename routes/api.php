@@ -31,6 +31,7 @@ Route::resource('candidate','Candidate\CandidateController',['except' => ['creat
 Route::get('createReport', 'Candidate\CandidateController@createReport');
 Route::get('validate_elector_key', 'Candidate\CandidateController@validateElectorKey');
 Route::get('validate_elector_ocr', 'Candidate\CandidateController@validateOCR');
+Route::get('getAyuntamiento/{postulate}', 'Candidate\CandidateController@getAyuntamiento');
 //END CANDIDATE RUTE
 
 //POLITIC PARTY ROUTE
