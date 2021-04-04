@@ -6,6 +6,7 @@ use App\Candidate;
 use App\PoliticParty;
 use App\Postulate;
 use App\User;
+use App\Utils\FieldsExcelReport;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
 use Illuminate\Support\Facades\Auth;
@@ -188,6 +189,7 @@ class CandidateController extends ApiController
                 ], 200);
         }
     }
+
     public function validateOCR(Request $request)
     {
         $ocr = $request->all()['ocr'];
@@ -208,4 +210,44 @@ class CandidateController extends ApiController
         }
     }
 
+    public function createReport(Request $request)
+    {
+        $rules = [
+            'type' => 'required'
+        ];
+
+        $this->validate($request, $rules);
+
+        $data = [];
+        $candidates = [];
+        $data_excel = [];
+
+        switch ($request->all()['type']) {
+            case Candidate::DRP:
+                $data = FieldsExcelReport::DRP;
+
+                if ($request->has('politic_party_id')) {
+                    $candidates = Candidate::where('postulate', Candidate::DRP)
+                        ->where('politic_party', $request->all()['politic_party_id'])
+                        ->getOwner()
+                        ->get();
+                } else {
+                    $candidates = Candidate::where('postulate', Candidate::DRP)
+                        ->getOwner()
+                        ->get();
+                }
+        }
+
+        foreach ($candidates as $candidate){
+            foreach ($data as $key => $value) {
+                if($key == 'CARGO'){
+                    $data_excel[$key] = ($candidate[$value] == Candidate::OWNER) ? 'PROPIETARIO' : 'SUPLENTE';
+                }else{
+                    $data_excel[$key] = $candidate[$value];
+                }
+            }
+        }
+
+        return $this->showList($data_excel);
+    }
 }

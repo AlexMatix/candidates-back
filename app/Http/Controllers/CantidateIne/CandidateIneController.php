@@ -18,9 +18,9 @@ class CandidateIneController extends ApiController
     {
         $rules = [
             "origin_candidate_id" => "required",
-            "number_line" => "required",
-            "demarcation" => "required",
-            "campaign" => "required",
+//            "number_line" => "required",
+//            "demarcation" => "required",
+//            "campaign" => "required",
             "curp" => "required",
             "curp_confirmation" => "required",
             "rfc" => "required",
@@ -28,8 +28,8 @@ class CandidateIneController extends ApiController
             "phone" => "required",
             "email" => "required",
             "email_confirmation" => "required",
-            "total_annual_income" => "required",
-            "total_annual_expenses" => "required",
+//            "total_annual_income" => "required",
+//            "total_annual_expenses" => "required",
         ];
         $this->validate($request, $rules);
 
