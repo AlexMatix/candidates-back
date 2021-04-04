@@ -154,7 +154,7 @@ class CandidateController extends ApiController
                 ->first();
         }
 
-        if (is_null($candidate)) {
+        if (is_null($candidate) || empty($candidate->elector_key)) {
             return $this->successResponse([
                 'result' => 'true',
                 'data' => $candidate
