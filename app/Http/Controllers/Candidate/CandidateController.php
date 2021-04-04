@@ -119,6 +119,7 @@ class CandidateController extends ApiController
     public function show(Candidate $candidate)
     {
         $candidate->postulate_data;
+        $candidate->alternate;
         return $this->showOne($candidate);
     }
 
