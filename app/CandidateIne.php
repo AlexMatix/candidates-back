@@ -9,6 +9,10 @@ class CandidateIne extends Model
     const OWNER = 1;
     const ALTERNATE = 2;
 
+    const DIPUTACION_RP= 1;
+    const DIPUTACION_MR = 2;
+    const REGIDURIA = 3;
+    const SINDICATURA = 4;
     protected $fillable = [
         'id',
         'father_lastname',
@@ -87,6 +91,8 @@ class CandidateIne extends Model
         'considerations'
     ];
 
+    const PRESIDENCIA = 5;
+
     public function postulate(){
         return $this->belongsTo(Postulate::class);
     }
@@ -105,5 +111,9 @@ class CandidateIne extends Model
 
     public function originCandidate(){
         return $this->belongsTo(Candidate::class);
+    }
+
+    public function scopeGetOwner($query){
+        return $query->where('type_postulate',Self::OWNER)->orderBy('politic_party_id')->orderBy('created_at');
     }
 }

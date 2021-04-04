@@ -39,6 +39,7 @@ Route::resource('politicParty','PoliticParty\PoliticPartyController',['only' => 
 
 //CANDIDATE ROUTE
 Route::resource('candidateIne','CantidateIne\CandidateIneController',['except' => ['create','edit']]);
+Route::get('createReportIne', 'CantidateIne\CandidateIneController@createReportINE');
 //END CANDIDATE ROUTE
 
 //POLITIC PARTY ROUTE

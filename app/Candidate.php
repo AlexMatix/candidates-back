@@ -8,11 +8,11 @@ use phpDocumentor\Reflection\Types\Self_;
 class Candidate extends Model
 {
 
-    const DIPUTACION_RP= 1;
-    const DIPUTACION_MR = 2;
-    const REGIDURIA = 3;
-    const SINDICATURA = 4;
-    const PRESIDENCIA = 5;
+    const DIPUTACION_RP= 1;//1
+    const DIPUTACION_MR = 2;//1
+    const REGIDURIA = 3;//2
+    const SINDICATURA = 4;//2
+    const PRESIDENCIA = 5; //1
     const TOTAL_DIPUTACION_RP = 15;
     const TOTAL_DIPUTACION_MR = 26;
 

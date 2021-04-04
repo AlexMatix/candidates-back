@@ -44,15 +44,15 @@ class CreateCandidateInesTable extends Migration
             $table->string('group_sexual_diversity'); //si - no
             $table->string('disabled_group'); //si - no
 
-            $table->integer('number_line');
+            $table->integer('number_line')->nullable();
             $table->integer('number_list');
             $table->integer('circumscription')->nullable();
             $table->integer('locality')->nullable();
-            $table->integer('demarcation');
+            $table->integer('demarcation')->nullable();
             $table->integer('municipalities_council')->nullable();
             $table->string('campaign_slogan',500)->nullable();
             $table->integer('list_number')->nullable();
-            $table->integer('campaign');
+            $table->integer('campaign')->nullable();
             $table->string('curp',18);
             $table->string('curp_confirmation',18);
             $table->string('rfc',13);
@@ -62,14 +62,14 @@ class CreateCandidateInesTable extends Migration
             $table->string('extension')->nullable();
             $table->string('email');
             $table->string('email_confirmation');
-            $table->decimal('total_annual_income',52,2);
+            $table->decimal('total_annual_income',52,2)->nullable();
             $table->decimal('salary_annual_income',52,2)->nullable();
             $table->decimal('financial_performances',52,2)->nullable();
             $table->decimal('annual_profit_professional_activity',52,2)->nullable();
             $table->decimal('annual_real_estate_lease_earnings',52,2)->nullable();
             $table->decimal('professional_services_fees',52,2)->nullable();
             $table->decimal('other_income',52,2)->nullable();
-            $table->decimal('total_annual_expenses',52,2);
+            $table->decimal('total_annual_expenses',52,2)->nullable();
             $table->decimal('personal_expenses',52,2)->nullable();
             $table->decimal('real_estate_payments',52,2)->nullable();
             $table->decimal('debt_payments',52,2)->nullable();
