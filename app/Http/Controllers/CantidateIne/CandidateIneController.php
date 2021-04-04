@@ -60,8 +60,10 @@ class CandidateIneController extends ApiController
         return $this->showOne($candidateIne);
     }
 
-    public function show(CandidateIne $candidateIne)
+    public function show(Candidate $candidate)
     {
+        $candidateIne = CandidateIne::where('origin_candidate_id', $candidate->id)->firstOrFail();
+
         $candidateIne->postulate;
         $candidateIne->politicParty;
         $candidateIne->owner;
@@ -70,8 +72,9 @@ class CandidateIneController extends ApiController
         return $this->showOne($candidateIne);
     }
 
-    public function update(Request $request, CandidateIne $candidateIne)
+    public function update(Request $request, Candidate $candidate)
     {
+        $candidateIne = CandidateIne::where('origin_candidate_id', $candidate->id)->firstOrFail();
         $candidateIne->fill($request->all());
         if ($candidateIne->isClean()) {
             return $this->errorResponse('A different value must be specified to update', 422);
@@ -81,9 +84,10 @@ class CandidateIneController extends ApiController
         return $this->showOne($candidateIne);
     }
 
-    public function destroy(CandidateIne $candidateIne)
+    public function destroy(Candidate $candidate)
     {
-        $candidate = Candidate::find($candidateIne->origin_candidate_id);
+        $candidateIne = CandidateIne::where('origin_candidate_id', $candidate->id)->firstOrFail();
+
         $candidate->ine_check = false;
         $candidate->save();
 

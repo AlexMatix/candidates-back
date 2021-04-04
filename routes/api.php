@@ -39,7 +39,11 @@ Route::resource('politicParty','PoliticParty\PoliticPartyController',['only' => 
 //END POLITIC PARTY ROUTE
 
 //CANDIDATE ROUTE
-Route::resource('candidateIne','CantidateIne\CandidateIneController',['except' => ['create','edit']]);
+Route::resource('candidateIne','CantidateIne\CandidateIneController',['only' => ['index','store']]);
+Route::get('candidateIne/{candidate}', 'CantidateIne\CandidateIneController@show');
+Route::put('candidateIne/{candidate}', 'CantidateIne\CandidateIneController@update');
+Route::delete('candidateIne/{candidate}', 'CantidateIne\CandidateIneController@destroy');
+
 Route::get('createReportIne', 'CantidateIne\CandidateIneController@createReportINE');
 //END CANDIDATE ROUTE
 
