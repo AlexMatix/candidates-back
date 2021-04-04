@@ -39,70 +39,68 @@ class CandidateController extends ApiController
             $records = [];
             $limitRecords = 0;
 
-            if ($request->has('postulate') == Candidate::REGIDURIA) {
-                $records = Candidate::where([
-                    ['postulate_id', '=', $history->id],
-                    ['politic_party_id', '=', $politic_party->id],
-                    ['postulate', '=', Candidate::REGIDURIA]
-                ])->get();
-                $records = $records->count();
-                $limitRecords = $history->regidurias * 2;
-            }
+            if (!$request->has('candidates')) {
+                if ($request->get('postulate') == Candidate::DIPUTACION_RP) {
 
-            if ($request->has('postulate') == Candidate::SINDICATURA) {
-                $records = Candidate::where([
-                    ['postulate_id', '=', $history->id],
-                    ['politic_party_id', '=', $politic_party->id],
-                    ['postulate', '=', Candidate::SINDICATURA]
+                    $records = Candidate::where([
+                        ['politic_party_id', '=', $politic_party->id],
+                        ['postulate', '=', Candidate::DIPUTACION_RP]
+                    ])->get();
+                    $records = $records->count();
+                    $limitRecords = Candidate::DIPUTACION_RP;
+                }
 
-                ])->get();
-                $records = $records->count();
-                $limitRecords = $history->sindicaturas * 2;
-            }
+                if ($request->get('postulate') == Candidate::DIPUTACION_MR) {
+                    $records = Candidate::where([
+                        ['politic_party_id', '=', $politic_party->id],
+                        ['postulate', '=', Candidate::TOTAL_DIPUTACION_MR]
+                    ])->get();
+                    $records = $records->count();
+                    $limitRecords = Candidate::TOTAL_DIPUTACION_MR;
+                }
+                if ($records < $limitRecords) {
+                    $newCandidate = new Candidate($request->all());
+                    $newCandidate->politic_party_id = $politic_party->id;
+                    $newCandidate->save();
+                    $newAlternate = new Candidate($request->get('alternate'));
+                    $newAlternate->candidate_id = $newCandidate->id;
+                    $newAlternate->politic_party_id = $politic_party->id;
+                    $newAlternate->postulate_id = $newCandidate->postulate_id;
+                    $newAlternate->postulate = $newCandidate->postulate;
+                    $newAlternate->type_postulate = Candidate::ALTERNATE;
+                    $newAlternate->save();
+                    return $this->showList([
+                        'owner' => $newCandidate,
+                        'alternate' => $newAlternate,
+                    ]);
+                }
+            } else {
+                foreach ($request->get('candidates') as $candidate) {
+                    if ($candidate[0]['owner']['id'] == 0) {
+                        unset($candidate[0]['owner']['id']);
+                        unset($candidate[0]['alternate']['id']);
+                        $owner = new Candidate($candidate[0]['owner']);
+                        $owner->postulate_id = $request->get('postulate_id');
+                        $owner->politic_party_id = $politic_party->id;
+                        $owner->postulate = $request->get('postulate');
+                        $owner->type_postulate = Candidate::OWNER;
+                        $owner->save();
 
-            if ($request->has('postulate') == Candidate::PRESIDENCIA) {
-                $records = Candidate::where([
-                    ['postulate_id', '=', $history->id],
-                    ['politic_party_id', '=', $politic_party->id],
-                    ['postulate', '=', Candidate::PRESIDENCIA]
-                ])->get();
-                $records = $records->count();
-                $limitRecords = $history->presidency * 2;
-            }
-
-            if ($request->has('postulate') == Candidate::DIPUTACION_RP) {
-
-                $records = Candidate::where([
-                    ['politic_party_id', '=', $politic_party->id],
-                    ['postulate', '=', Candidate::DIPUTACION_RP]
-                ])->get();
-                $records = $records->count();
-                $limitRecords = Candidate::DIPUTACION_RP;
-            }
-
-            if ($request->has('postulate') == Candidate::DIPUTACION_MR) {
-                $records = Candidate::where([
-                    ['politic_party_id', '=', $politic_party->id],
-                    ['postulate', '=', Candidate::TOTAL_DIPUTACION_MR]
-                ])->get();
-                $records = $records->count();
-                $limitRecords = Candidate::TOTAL_DIPUTACION_MR;
-            }
-            if ($records < $limitRecords) {
-                $newCandidate = new Candidate($request->all());
-                $newCandidate->politic_party_id = $politic_party->id;
-                $newCandidate->save();
-                $newAlternate = new Candidate($request->get('alternate'));
-                $newAlternate->candidate_id = $newCandidate->id;
-                $newAlternate->politic_party_id = $politic_party->id;
-                $newAlternate->postulate_id = $newCandidate->postulate_id;
-                $newAlternate->postulate = $newCandidate->postulate;
-                $newAlternate->type_postulate = Candidate::ALTERNATE;
-                $newAlternate->save();
-                return $this->showList([
-                    'owner' => $newCandidate,
-                    'alternate' => $newAlternate,
-                ]);
+                        $alternate = new Candidate($candidate[0]['alternate']);
+                        $alternate->postulate_id = $request->get('postulate_id');
+                        $alternate->politic_party_id = $politic_party->id;
+                        $alternate->postulate = $request->get('postulate');
+                        $alternate->type_postulate = Candidate::ALTERNATE;
+                        $alternate->candidate_id = $owner->id;
+                        $alternate->save();
+                    }else{
+                        $owner = Candidate::findOrFail($candidate[0]['owner']['id']);
+                        $alternate = Candidate::findOrFail($candidate[0]['alternate']['id']);
+                        $this->update($candidate[0]['owner'], $owner);
+                        $this->update($candidate[0]['alternate'], $alternate);
+                    }
+                }
+                return $this->showMessage('Save success');
             }
 
         } else {
@@ -117,48 +115,14 @@ class CandidateController extends ApiController
     }
 
 
-    public function update(Request $request, Candidate $candidate)
+    public function update($request, Candidate $candidate)
     {
         $rules = [
             'date_birth' => 'date',
         ];
 
-        $this->validate($request, $rules);
-        $candidate->fill($request->only([
-            'father_lastname',
-            'mother_lastname',
-            'name',
-            'nickname',
-            'roads',
-            'roads_name',
-            'outdoor_number',
-            'interior_number',
-            'neighborhood',
-            'zipcode',
-            'municipality',
-            'elector_key',
-            'ocr',
-            'cic',
-            'emission',
-            'entity',
-            'section',
-            'date_birth',
-            'gender',
-            'birthplace',
-            'residence_time_year',
-            'residence_time_month',
-            'occupation',
-            're_election',
-            'postulate',
-            'type_postulate',
-            'indigenous_group',
-            'group_sexual_diversity',
-            'disabled_group',
-            'politic_party_id',
-            'postulate_id',
-            'candidate_id',
-            'ine_check'
-        ]));
+        $candidate->fill($request);
+        $candidate->save();
     }
 
 
@@ -241,7 +205,7 @@ class CandidateController extends ApiController
 
         if ($request->has('politic_party_id')) {
             $candidates = Candidate::where('postulate', $request->all()['type'])
-                ->where('politic_party', $request->all()['politic_party_id'])
+                ->where('politic_party_id', $request->all()['politic_party_id'])
                 ->getOwner()
                 ->get();
         } else {
@@ -285,5 +249,26 @@ class CandidateController extends ApiController
         $report->createExcel($data_excel, array_keys($data));
 
         return $this->downloadFile($path . 'basic.xlsx');
+    }
+
+    public  function getAyuntamiento(Postulate $postulate){
+
+        $user = Auth::user();
+        $politic_party = PoliticParty::findOrFail($user->politic_party_id);
+        $owners = Candidate::where([
+            ['politic_party_id', '=', $politic_party->id],
+            ['postulate_id', '=', $postulate->id],
+            ['type_postulate', '=', Candidate::OWNER],
+            ['postulate', '<>', Candidate::DIPUTACION_RP],
+            ['postulate', '<>', Candidate::DIPUTACION_MR],
+        ])->get();
+
+        $dataReturn = [];
+        foreach ($owners as $key => $owner){
+            $dataReturn[$key]['owner'] = $owner;
+            $dataReturn[$key]['alternate'] = $owner->alternate;
+        }
+
+        return $this->showList($dataReturn);
     }
 }
