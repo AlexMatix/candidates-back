@@ -39,7 +39,7 @@ class CandidateController extends ApiController
             $records = [];
             $limitRecords = 0;
 
-            if (!$request->has('postulate')) {
+            if (!$request->has('candidates')) {
                 if ($request->get('postulate') == Candidate::DIPUTACION_RP) {
 
                     $records = Candidate::where([
