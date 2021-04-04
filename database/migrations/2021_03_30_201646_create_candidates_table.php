@@ -45,7 +45,7 @@ class CreateCandidatesTable extends Migration
             $table->string('group_sexual_diversity')->nullable();; //si - no
             $table->string('disabled_group')->nullable();; //si - no
             $table->boolean('ine_check')->nullable();
-            $table->unsignedBigInteger('postulate_id'); //si - no
+            $table->unsignedBigInteger('postulate_id')->nullable(); //si - no
             $table->unsignedBigInteger('politic_party_id'); //si - no
             $table->unsignedBigInteger('candidate_id')->nullable(); //si - no
 

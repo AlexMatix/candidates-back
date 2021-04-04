@@ -22,11 +22,18 @@ class CandidateController extends ApiController
         $user = Auth::user();
         $politic_party = PoliticParty::findOrFail($user->politic_party_id);
 
+        $candidates = [];
         if ($user->type === User::ADMIN) {
-            return $this->showAll(Candidate::all());
+            $candidates = Candidate::all();
         } else {
-            return $this->showList(Candidate::where('politic_party_id', $politic_party->id)->get());
+            $candidates = Candidate::where('politic_party_id', $politic_party->id)->get();
         }
+
+        foreach ($candidates as $candidate){
+            $candidate->postulate_data;
+        }
+
+        return $this->showList($candidates);
     }
 
     public function store(Request $request)
@@ -34,7 +41,6 @@ class CandidateController extends ApiController
         $user = Auth::user();
 
         if ($user->type === User::CAP) {
-            $history = Postulate::findOrFail($request->has('postulate_id'));
             $politic_party = PoliticParty::findOrFail($user->politic_party_id);
             $records = [];
             $limitRecords = 0;
@@ -47,7 +53,7 @@ class CandidateController extends ApiController
                         ['postulate', '=', Candidate::DIPUTACION_RP]
                     ])->get();
                     $records = $records->count();
-                    $limitRecords = Candidate::DIPUTACION_RP;
+                    $limitRecords = Candidate::TOTAL_DIPUTACION_RP;
                 }
 
                 if ($request->get('postulate') == Candidate::DIPUTACION_MR) {
@@ -58,6 +64,7 @@ class CandidateController extends ApiController
                     $records = $records->count();
                     $limitRecords = Candidate::TOTAL_DIPUTACION_MR;
                 }
+
                 if ($records < $limitRecords) {
                     $newCandidate = new Candidate($request->all());
                     $newCandidate->politic_party_id = $politic_party->id;
@@ -111,6 +118,7 @@ class CandidateController extends ApiController
 
     public function show(Candidate $candidate)
     {
+        $candidate->postulate_data;
         return $this->showOne($candidate);
     }
 

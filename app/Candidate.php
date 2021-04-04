@@ -60,6 +60,10 @@ class Candidate extends Model
         return $this->belongsTo(Postulate::class);
     }
 
+    public function postulate_data(){
+        return $this->belongsTo(Postulate::class, 'postulate_id');
+    }
+
     public function owner(){
         return $this->belongsTo(Candidate::class);
     }
