@@ -103,8 +103,8 @@ class CandidateController extends ApiController
                     }else{
                         $owner = Candidate::findOrFail($candidate[0]['owner']['id']);
                         $alternate = Candidate::findOrFail($candidate[0]['alternate']['id']);
-                        $this->update($candidate[0]['owner'], $owner);
-                        $this->update($candidate[0]['alternate'], $alternate);
+                        $this->updateCandidates($candidate[0]['owner'], $owner);
+                        $this->updateCandidates($candidate[0]['alternate'], $alternate);
                     }
                 }
                 return $this->showMessage('Save success');
@@ -123,8 +123,18 @@ class CandidateController extends ApiController
     }
 
 
-    public function update($request, Candidate $candidate)
+    public function update(Request $request, Candidate $candidate)
     {
+        $candidate->fill($request->all());
+        if ($candidate->isClean()) {
+            return $this->errorResponse('A different value must be specified to update', 422);
+        }
+        $candidate->save();
+
+        return $this->showOne($candidate);
+    }
+
+    private function updateCandidates($request, Candidate $candidate){
         $rules = [
             'date_birth' => 'date',
         ];
@@ -132,7 +142,6 @@ class CandidateController extends ApiController
         $candidate->fill($request);
         $candidate->save();
     }
-
 
     public function destroy(Candidate $candidate)
     {
