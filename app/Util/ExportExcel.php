@@ -1,6 +1,11 @@
 <?php
 
-
+namespace App\Utils;
+use Box\Spout\Common\Entity\Style\Border;
+use Box\Spout\Common\Entity\Style\CellAlignment;
+use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
+use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Box\Spout\Common\Entity\Style\Color;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 
 class ExportExcel
@@ -27,8 +32,6 @@ class ExportExcel
         $header_style = (new StyleBuilder())
             ->setBorder($border)
             ->setCellAlignment(CellAlignment::CENTER)
-            ->setBackgroundColor(Color::rgb(105, 28, 50))
-            ->setFontColor(Color::WHITE)
             ->build();
 
         $data_style = (new StyleBuilder())

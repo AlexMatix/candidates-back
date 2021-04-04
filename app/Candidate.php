@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use phpDocumentor\Reflection\Types\Self_;
 
 class Candidate extends Model
 {
@@ -17,7 +18,6 @@ class Candidate extends Model
 
     const OWNER = 1;
     const ALTERNATE = 2;
-
 
     protected $fillable = [
         'id',
@@ -70,5 +70,9 @@ class Candidate extends Model
 
     public function copyCandidateIne(){
         return $this->hasOne(CandidateIne::class, 'origin_candidate_id');
+    }
+
+    public function scopeGetOwner($query){
+        return $query->where('type_postulate',Self::OWNER)->orderBy('politic_party_id')->orderBy('created_at');
     }
 }

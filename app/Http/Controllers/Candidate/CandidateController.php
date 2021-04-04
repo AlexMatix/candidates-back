@@ -6,9 +6,13 @@ use App\Candidate;
 use App\PoliticParty;
 use App\Postulate;
 use App\User;
+use App\Utils\ExportExcel;
+use App\Utils\FieldsExcelReport;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class CandidateController extends ApiController
 {
@@ -191,6 +195,7 @@ class CandidateController extends ApiController
                 ], 200);
         }
     }
+
     public function validateOCR(Request $request)
     {
         $ocr = $request->all()['ocr'];
@@ -211,4 +216,74 @@ class CandidateController extends ApiController
         }
     }
 
+    public function createReport(Request $request)
+    {
+        $rules = [
+            'type' => 'required'
+        ];
+
+        $this->validate($request, $rules);
+
+        $candidates_all = [];
+        $data_excel = [];
+
+        switch ($request->all()['type']) {
+            case Candidate::DIPUTACION_RP:
+                $data = FieldsExcelReport::DRP;
+                break;
+            case Candidate::DIPUTACION_MR:
+                $data = FieldsExcelReport::DMR;
+                break;
+            default:
+                $data = FieldsExcelReport::AYU;
+                break;
+        };
+
+        if ($request->has('politic_party_id')) {
+            $candidates = Candidate::where('postulate', $request->all()['type'])
+                ->where('politic_party', $request->all()['politic_party_id'])
+                ->getOwner()
+                ->get();
+        } else {
+            $candidates = Candidate::where('postulate', $request->all()['type'])
+                ->getOwner()
+                ->get();
+        }
+
+        foreach ($candidates as $candidate) {
+            $candidates_all[] = $candidate;
+            if (!is_null($candidate->alternate)) {
+                $candidates_all[] = $candidate->alternate;
+            }
+        }
+
+        $i = 0;
+        foreach ($candidates_all as $candidate) {
+            foreach ($data as $key => $value) {
+                if ($key == 'CARGO') {
+                    $data_excel[$i][$key] = ($candidate[$value] == Candidate::OWNER) ? 'PROPIETARIO' : 'SUPLENTE';
+                } elseif ($key == 'DISTRITO') {
+                    $postulate = Postulate::find($candidate[$value]);
+                    $data_excel[$i][$key] = $postulate->district;
+                } elseif ($key == 'NO_MPIO') {
+                    $postulate = Postulate::find($candidate[$value]);
+                    $data_excel[$i][$key] = $postulate->municipality_key;
+                } else {
+                    $data_excel[$i][$key] = $candidate[$value];
+                }
+            }
+            $i++;
+        }
+
+        $path = Storage::path('reports/');
+
+        if (!File::exists($path)) {
+            File::makeDirectory($path, 0777, true, true);
+        }
+
+        $report = new ExportExcel($path . 'basic.xlsx');
+        $report->createExcel($data_excel, array_keys($data));
+
+        return $this->downloadFile($path . 'basic.xlsx');
+    }
 }
