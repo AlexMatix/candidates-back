@@ -154,7 +154,10 @@ class CandidateController extends ApiController
             'indigenous_group',
             'group_sexual_diversity',
             'disabled_group',
-            'party',
+            'politic_party_id',
+            'postulate_id',
+            'candidate_id',
+            'ine_check'
         ]));
     }
 
