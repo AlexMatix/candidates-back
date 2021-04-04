@@ -14,7 +14,6 @@ class CandidateIne extends Model
     const REGIDURIA = 3;
     const SINDICATURA = 4;
     protected $fillable = [
-        'id',
         'father_lastname',
         'mother_lastname',
         'name',
