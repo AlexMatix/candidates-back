@@ -21,8 +21,8 @@ class CreateCandidatesTable extends Migration
             $table->string('nickname')->nullable(); //CHICARCAS
             $table->string('roads')->nullable();; //AVENIDA  Posible select
             $table->string('roads_name')->nullable();; //LOS GIRASOLES
-            $table->integer('outdoor_number')->nullable();; //2155
-            $table->integer('interior_number')->nullable(); //A
+            $table->strin g('outdoor_number')->nullable();; //2155
+            $table->string('interior_number')->nullable(); //A
             $table->string('neighborhood')->nullable();; //LA PAZ
             $table->string('zipcode')->nullable();; // 72000
             $table->string('municipality')->nullable();; //PUEBLA
