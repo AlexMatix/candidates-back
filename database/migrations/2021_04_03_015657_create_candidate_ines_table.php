@@ -45,7 +45,7 @@ class CreateCandidateInesTable extends Migration
             $table->string('disabled_group'); //si - no
 
             $table->integer('number_line')->nullable();
-            $table->integer('number_list');
+            $table->integer('number_list')->nullable();
             $table->integer('circumscription')->nullable();
             $table->integer('locality')->nullable();
             $table->integer('demarcation')->nullable();

@@ -33,7 +33,9 @@ class CandidateIneController extends ApiController
         ];
         $this->validate($request, $rules);
 
-        $candidateIne = CandidateIne::create($request->all());
+        $candidateIne = new CandidateIne($request->all());
+        $candidateIne->number_list = ($request->has('number_list') && !is_null($request->all()['number_list'])) ? $request->all()['number_list'] : 0;
+        $candidateIne->save();
 
         $candidate = Candidate::find($candidateIne->origin_candidate_id);
         $candidate->ine_check = true;
@@ -127,16 +129,16 @@ class CandidateIneController extends ApiController
                 if ($key == 'Distrito') {
                     $postulate = Postulate::find($candidate[$value]);
                     $data_excel[$i][$key] = $postulate->district;
-                } elseif($key == 'Municipio') {
+                } elseif ($key == 'Municipio') {
                     $postulate = Postulate::find($candidate->postulate_id);
                     $data_excel[$i][$key] = $postulate->municipality;
-                }else {
+                } else {
                     $data_excel[$i][$key] = $candidate[$value];
                 }
             }
 
             //ALTERNATE DATA
-            if(!is_null($candidate->alternate)){
+            if (!is_null($candidate->alternate)) {
                 foreach ($data_alternate as $key => $value) {
                     if ($key == 'Registra suplencia|') {
                         $data_excel[$i][$key] = 1;
@@ -144,14 +146,14 @@ class CandidateIneController extends ApiController
                         $data_excel[$i][$key] = $candidate[$value];
                     }
                 }
-            }else{
+            } else {
                 return $this->errorResponse('Candidato sin suplente registrado', 404);
             }
             $i++;
         }
 
-        foreach (array_keys($data_alternate) as $item){
-            $array_key_alternate[] = str_replace('|','',$item);
+        foreach (array_keys($data_alternate) as $item) {
+            $array_key_alternate[] = str_replace('|', '', $item);
         }
 
         $path = Storage::path('reports/');
