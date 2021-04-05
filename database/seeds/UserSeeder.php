@@ -19,7 +19,7 @@ class UserSeeder extends Seeder
         \App\User::create([
             'name' => 'Admin',
             'email' => 'admin@admin.com',
-            'password' => bcrypt('secret'),
+            'password' => bcrypt('Mipito'),
             'configuration' => '',
             'politic_party_id' => 1,
             'type' => \App\User::ADMIN
