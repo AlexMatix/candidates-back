@@ -82,18 +82,22 @@ class CandidateController extends ApiController
                     ]);
                 }
             } else {
-                foreach ($request->get('candidates') as $candidate) {
-                    if ($candidate[0]['owner']['id'] == 0) {
-                        unset($candidate[0]['owner']['id']);
-                        unset($candidate[0]['alternate']['id']);
-                        $owner = new Candidate($candidate[0]['owner']);
+                foreach ($request->get('candidates')[0] as $candidate) {
+                    if ($candidate['owner']['id'] == 0) {
+                        if (empty($candidate['owner']['name'])) {
+                            continue;
+                        }
+
+                        unset($candidate['owner']['id']);
+                        unset($candidate['alternate']['id']);
+                        $owner = new Candidate($candidate['owner']);
                         $owner->postulate_id = $request->get('postulate_id');
                         $owner->politic_party_id = $politic_party->id;
                         $owner->postulate = $request->get('postulate');
                         $owner->type_postulate = Candidate::OWNER;
                         $owner->save();
 
-                        $alternate = new Candidate($candidate[0]['alternate']);
+                        $alternate = new Candidate($candidate['alternate']);
                         $alternate->postulate_id = $request->get('postulate_id');
                         $alternate->politic_party_id = $politic_party->id;
                         $alternate->postulate = $request->get('postulate');
@@ -101,10 +105,10 @@ class CandidateController extends ApiController
                         $alternate->candidate_id = $owner->id;
                         $alternate->save();
                     } else {
-                        $owner = Candidate::findOrFail($candidate[0]['owner']['id']);
-                        $alternate = Candidate::findOrFail($candidate[0]['alternate']['id']);
-                        $this->updateCandidates($candidate[0]['owner'], $owner);
-                        $this->updateCandidates($candidate[0]['alternate'], $alternate);
+                        $owner = Candidate::findOrFail($candidate['owner']['id']);
+                        $alternate = Candidate::findOrFail($candidate['alternate']['id']);
+                        $this->updateCandidates($candidate['owner'], $owner);
+                        $this->updateCandidates($candidate['alternate'], $alternate);
                     }
                 }
                 return $this->showMessage('Save success');
