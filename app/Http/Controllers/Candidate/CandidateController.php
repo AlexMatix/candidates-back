@@ -29,7 +29,7 @@ class CandidateController extends ApiController
             $candidates = Candidate::where('politic_party_id', $politic_party->id)->get();
         }
 
-        foreach ($candidates as $candidate){
+        foreach ($candidates as $candidate) {
             $candidate->postulate_data;
         }
 
@@ -100,7 +100,7 @@ class CandidateController extends ApiController
                         $alternate->type_postulate = Candidate::ALTERNATE;
                         $alternate->candidate_id = $owner->id;
                         $alternate->save();
-                    }else{
+                    } else {
                         $owner = Candidate::findOrFail($candidate[0]['owner']['id']);
                         $alternate = Candidate::findOrFail($candidate[0]['alternate']['id']);
                         $this->updateCandidates($candidate[0]['owner'], $owner);
@@ -126,16 +126,21 @@ class CandidateController extends ApiController
 
     public function update(Request $request, Candidate $candidate)
     {
+        $alternate = Candidate::findOrFail($request->all()['alternate']['id']);
         $candidate->fill($request->all());
-        if ($candidate->isClean()) {
-            return $this->errorResponse('A different value must be specified to update', 422);
+        $alternate->fill($request->all()['alternate']);
+        if (!$candidate->isClean()) {
+            $candidate->save();
         }
-        $candidate->save();
-
+        if (!$alternate->isClean()) {
+            $alternate->save();
+        }
+        $candidate->alternate;
         return $this->showOne($candidate);
     }
 
-    private function updateCandidates($request, Candidate $candidate){
+    private function updateCandidates($request, Candidate $candidate)
+    {
         $rules = [
             'date_birth' => 'date',
         ];
@@ -269,7 +274,8 @@ class CandidateController extends ApiController
         return $this->downloadFile($path . 'basic.xlsx');
     }
 
-    public  function getAyuntamiento(Postulate $postulate){
+    public function getAyuntamiento(Postulate $postulate)
+    {
 
         $user = Auth::user();
         $politic_party = PoliticParty::findOrFail($user->politic_party_id);
@@ -282,7 +288,7 @@ class CandidateController extends ApiController
         ])->get();
 
         $dataReturn = [];
-        foreach ($owners as $key => $owner){
+        foreach ($owners as $key => $owner) {
             $dataReturn[$key]['owner'] = $owner;
             $dataReturn[$key]['alternate'] = $owner->alternate;
         }
