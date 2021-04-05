@@ -45,12 +45,14 @@ class CreateCandidatesTable extends Migration
             $table->string('group_sexual_diversity')->nullable();; //si - no
             $table->string('disabled_group')->nullable();; //si - no
             $table->boolean('ine_check')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable(); //si - no
             $table->unsignedBigInteger('postulate_id')->nullable(); //si - no
             $table->unsignedBigInteger('politic_party_id'); //si - no
             $table->unsignedBigInteger('candidate_id')->nullable(); //si - no
 
             $table->timestamps();
 
+            $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('postulate_id')->references('id')->on('postulates');
             $table->foreign('candidate_id')->references('id')->on('candidates');
             $table->foreign('politic_party_id')->references('id')->on('politic_parties');

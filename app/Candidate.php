@@ -53,7 +53,8 @@ class Candidate extends Model
         'politic_party_id',
         'postulate_id',
         'candidate_id',
-        'ine_check'
+        'ine_check',
+        'user_id'
     ];
 
     public function postulate(){
@@ -74,6 +75,10 @@ class Candidate extends Model
 
     public function copyCandidateIne(){
         return $this->hasOne(CandidateIne::class, 'origin_candidate_id');
+    }
+
+    public function user(){
+        return $this->belongsTo(User::class);
     }
 
     public function scopeGetOwner($query){

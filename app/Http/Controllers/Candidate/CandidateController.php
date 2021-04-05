@@ -26,7 +26,7 @@ class CandidateController extends ApiController
         if ($user->type === User::ADMIN) {
             $candidates = Candidate::all();
         } else {
-            $candidates = Candidate::where('politic_party_id', $politic_party->id)->get();
+            $candidates = Candidate::where('politic_party_id', $politic_party->id)->where('user_id', $user->id)->get();
         }
 
         foreach ($candidates as $candidate) {
@@ -68,6 +68,7 @@ class CandidateController extends ApiController
                 if ($records < $limitRecords) {
                     $newCandidate = new Candidate($request->all());
                     $newCandidate->politic_party_id = $politic_party->id;
+                    $newCandidate->user_id = $user->id;
                     $newCandidate->save();
                     $newAlternate = new Candidate($request->get('alternate'));
                     $newAlternate->candidate_id = $newCandidate->id;
@@ -75,6 +76,7 @@ class CandidateController extends ApiController
                     $newAlternate->postulate_id = $newCandidate->postulate_id;
                     $newAlternate->postulate = $newCandidate->postulate;
                     $newAlternate->type_postulate = Candidate::ALTERNATE;
+                    $newAlternate->user_id = $user->id;
                     $newAlternate->save();
                     return $this->showList([
                         'owner' => $newCandidate,
@@ -95,6 +97,7 @@ class CandidateController extends ApiController
                         $owner->politic_party_id = $politic_party->id;
                         $owner->postulate = $request->get('postulate');
                         $owner->type_postulate = Candidate::OWNER;
+                        $owner->user_id = $user->id;
                         $owner->save();
 
                         $alternate = new Candidate($candidate['alternate']);
@@ -103,6 +106,7 @@ class CandidateController extends ApiController
                         $alternate->postulate = $request->get('postulate');
                         $alternate->type_postulate = Candidate::ALTERNATE;
                         $alternate->candidate_id = $owner->id;
+                        $alternate->user_id = $user->id;
                         $alternate->save();
                     } else {
                         $owner = Candidate::findOrFail($candidate['owner']['id']);
@@ -113,7 +117,6 @@ class CandidateController extends ApiController
                 }
                 return $this->showMessage('Save success');
             }
-
         } else {
             return $this->showMessage('El administrador no puede dar de alta registros', 409);
         }
@@ -183,7 +186,9 @@ class CandidateController extends ApiController
                 [
                     'result' => 'false',
                     'data' => $candidate
-                ], 200);
+                ],
+                200
+            );
         }
     }
 
