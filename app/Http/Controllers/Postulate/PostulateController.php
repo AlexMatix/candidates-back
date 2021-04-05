@@ -64,8 +64,9 @@ class PostulateController extends ApiController
                 'sindicaturas' => $postulate->sindicaturas,
             ];
         }
+        $districts = array_unique($districts, SORT_REGULAR);
         return $this->showList([
-            'districts' => array_unique($districts, SORT_REGULAR),
+            'districts' => sort($districts),
             'municipalities' => $municipalities
         ]);
 

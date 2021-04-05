@@ -238,7 +238,7 @@ class CandidateController extends ApiController
         if ($request->has('politic_party_id')) {
             $candidates = Candidate::where('postulate', $request->all()['type'])
                 ->where('politic_party_id', $request->all()['politic_party_id'])
-                ->getOwner()
+                ->get|Owner()
                 ->get();
         } else {
             $candidates = Candidate::where('postulate', $request->all()['type'])
