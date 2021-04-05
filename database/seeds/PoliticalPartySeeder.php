@@ -35,6 +35,10 @@ class PoliticalPartySeeder extends Seeder
                 [
                     'id' => 5,
                     'name' => 'MORENA/PT'
+                ],
+                [
+                    'id' => 6,
+                    'name' => 'NUEVA ALIANZA'
                 ]
             ]
 
