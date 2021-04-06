@@ -170,4 +170,78 @@ class CandidateIneController extends ApiController
 
         return $this->downloadFile($path . 'basic.xlsx');
     }
+
+    public function createReportINEByUser(Request $request)
+    {
+        $rules = [
+            'type' => 'required',
+            'user_id' => 'required'
+        ];
+
+        $this->validate($request, $rules);
+
+        $data_excel = [];
+        $array_key_alternate = [];
+
+        if ($request->all()['type'] == CandidateIne::DIPUTACION_RP || $request->all()['type'] == CandidateIne::DIPUTACION_MR || $request->all()['type'] == CandidateIne::PRESIDENCIA) {
+            $data = FieldsExcelReport::INE;
+            $data_alternate = FieldsExcelReport::INE_ALTERNATE;
+        } else {
+            $data = FieldsExcelReport::INE_2;
+            $data_alternate = FieldsExcelReport::INE_2_ALTERNATE;
+        }
+
+        $candidates = CandidateIne::join('candidates', 'candidate_ines.origin_candidate_id', '=', 'candidates.id')
+            ->select('candidate_ines.*', 'candidates.user_id')
+            ->where('user_id', $request->all()['user_id'])
+            ->where('candidate_ines.postulate', $request->all()['type'])
+            ->where('candidate_ines.type_postulate', CandidateIne::OWNER)
+            ->orderBy('candidate_ines.politic_party_id')
+            ->orderBy('candidate_ines.created_at')->get();
+
+        $i = 0;
+        foreach ($candidates as $candidate) {
+            //OWNER DATA
+            foreach ($data as $key => $value) {
+                if ($key == 'Distrito') {
+                    $postulate = Postulate::find($candidate[$value]);
+                    $data_excel[$i][$key] = $postulate->district;
+                } elseif ($key == 'Municipio') {
+                    $postulate = Postulate::find($candidate->postulate_id);
+                    $data_excel[$i][$key] = $postulate->municipality;
+                } else {
+                    $data_excel[$i][$key] = $candidate[$value];
+                }
+            }
+
+            //ALTERNATE DATA
+            if (!is_null($candidate->alternate)) {
+                foreach ($data_alternate as $key => $value) {
+                    if ($key == 'Registra suplencia|') {
+                        $data_excel[$i][$key] = 1;
+                    } else {
+                        $data_excel[$i][$key] = $candidate[$value];
+                    }
+                }
+            } else {
+                return $this->errorResponse('Candidato sin suplente registrado', 404);
+            }
+            $i++;
+        }
+
+        foreach (array_keys($data_alternate) as $item) {
+            $array_key_alternate[] = str_replace('|', '', $item);
+        }
+
+        $path = Storage::path('reports/');
+
+        if (!File::exists($path)) {
+            File::makeDirectory($path, 0777, true, true);
+        }
+
+        $report = new ExportExcel($path . 'basic.xlsx');
+        $report->createExcel($data_excel, array_merge(array_keys($data), $array_key_alternate));
+
+        return $this->downloadFile($path . 'basic.xlsx');
+    }
 }

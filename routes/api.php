@@ -29,6 +29,7 @@ Route::get('getUserLogged','User\UserController@getUserLogged');
 //CANDIDATE RUTE
 Route::resource('candidate','Candidate\CandidateController',['except' => ['create','edit']]);
 Route::get('createReport', 'Candidate\CandidateController@createReport');
+Route::get('createReportByUser', 'Candidate\CandidateController@createReportByUser');
 Route::get('validate_elector_key', 'Candidate\CandidateController@validateElectorKey');
 Route::get('validate_elector_ocr', 'Candidate\CandidateController@validateOCR');
 Route::get('getAyuntamiento/{postulate}', 'Candidate\CandidateController@getAyuntamiento');
@@ -46,6 +47,7 @@ Route::put('candidateIne/{candidate}', 'CantidateIne\CandidateIneController@upda
 Route::delete('candidateIne/{candidate}', 'CantidateIne\CandidateIneController@destroy');
 
 Route::get('createReportIne', 'CantidateIne\CandidateIneController@createReportINE');
+Route::get('createReportIneByUser', 'CantidateIne\CandidateIneController@createReportINEByUser');
 //END CANDIDATE ROUTE
 
 //POLITIC PARTY ROUTE
