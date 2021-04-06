@@ -88,7 +88,7 @@ class CandidateController extends ApiController
                             'elector_key', $candidate['owner']['elector_key']
                         )->first();
 
-                        if(!empty($checkCandidate)){
+                        if (!empty($checkCandidate)) {
                             continue;
                         }
 
@@ -113,8 +113,11 @@ class CandidateController extends ApiController
                     } else {
                         $owner = Candidate::findOrFail($candidate['owner']['id']);
                         $alternate = Candidate::findOrFail($candidate['alternate']['id']);
-                        $this->updateCandidates($candidate['owner'], $owner);
-                        $this->updateCandidates($candidate['alternate'], $alternate);
+                        if ($user->id == $candidate['owner']['user_id']) {
+                            $this->updateCandidates($candidate['owner'], $owner);
+                            $this->updateCandidates($candidate['alternate'], $alternate);
+                        }
+
                     }
                 }
                 return $this->showMessage('Save success');
@@ -240,9 +243,9 @@ class CandidateController extends ApiController
 
         if ($request->has('politic_party_id')) {
             $candidates = Candidate::where('postulate', $request->all()['type'])
-                ->where('politic_party_id', $request->all()['politic_party_id'])
-                ->get|Owner()
-                ->get();
+                    ->where('politic_party_id', $request->all()['politic_party_id'])
+                    ->get | Owner()
+                    ->get();
         } else {
             $candidates = Candidate::where('postulate', $request->all()['type'])
                 ->getOwner()
