@@ -20,17 +20,11 @@ class CandidateController extends ApiController
     public function index()
     {
         $user = Auth::user();
-        $politic_party = PoliticParty::findOrFail($user->politic_party_id);
 
-        $candidates = [];
         if ($user->type === User::ADMIN) {
-            $candidates = Candidate::all();
+            $candidates = Candidate::with('postulate_data')->paginate(100);
         } else {
-            $candidates = Candidate::where('politic_party_id', $politic_party->id)->where('user_id', $user->id)->get();
-        }
-
-        foreach ($candidates as $candidate) {
-            $candidate->postulate_data;
+            $candidates = Candidate::where('user_id', $user->id)->with('postulate_data')->paginate(100);;
         }
 
         return $this->showList($candidates);
