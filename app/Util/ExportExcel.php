@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Utils;
+namespace App\Util;
 use Box\Spout\Common\Entity\Style\Border;
 use Box\Spout\Common\Entity\Style\CellAlignment;
 use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;

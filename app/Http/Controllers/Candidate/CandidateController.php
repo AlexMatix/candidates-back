@@ -6,10 +6,11 @@ use App\Candidate;
 use App\PoliticParty;
 use App\Postulate;
 use App\User;
-use App\Utils\ExportExcel;
-use App\Utils\FieldsExcelReport;
+use App\Util\ExportExcel;
+use App\Util\FieldsExcelReport;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
+use App\Util\ImportExcel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -308,5 +309,18 @@ class CandidateController extends ApiController
         }
 
         return $this->showList($dataReturn);
+    }
+
+    public function importLayout(Request $request){
+        $path = Storage::path('ImportAux/');
+
+        if (!File::exists($path)) {
+            File::makeDirectory($path, 0777, true, true);
+        }
+
+        $request->file->storeAs('ImportAux', 'LayoutCandidates.xlsx');
+
+        $import = new ImportExcel($path . 'LayoutCandidates.xlsx');
+        $import->readExcel(2);
     }
 }

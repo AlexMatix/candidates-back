@@ -32,6 +32,7 @@ Route::get('createReport', 'Candidate\CandidateController@createReport');
 Route::get('validate_elector_key', 'Candidate\CandidateController@validateElectorKey');
 Route::get('validate_elector_ocr', 'Candidate\CandidateController@validateOCR');
 Route::get('getAyuntamiento/{postulate}', 'Candidate\CandidateController@getAyuntamiento');
+Route::post('importLayout', 'Candidate\CandidateController@importLayout');
 //END CANDIDATE RUTE
 
 //POLITIC PARTY ROUTE
