@@ -106,23 +106,66 @@ class CandidateIneController extends ApiController
         $data_excel = [];
         $array_key_alternate = [];
 
-        if ($request->all()['type'] == CandidateIne::DIPUTACION_RP || $request->all()['type'] == CandidateIne::DIPUTACION_MR || $request->all()['type'] == CandidateIne::PRESIDENCIA) {
-            $data = FieldsExcelReport::INE;
-            $data_alternate = FieldsExcelReport::INE_ALTERNATE;
-        } else {
-            $data = FieldsExcelReport::INE_2;
-            $data_alternate = FieldsExcelReport::INE_2_ALTERNATE;
-        }
+
 
         if ($request->has('politic_party_id')) {
-            $candidates = CandidateIne::where('postulate', $request->all()['type'])
-                ->where('politic_party_id', $request->all()['politic_party_id'])
-                ->getOwner()
-                ->get();
+            if ($request->all()['type'] == 1) {
+                $data = FieldsExcelReport::INE;
+                $data_alternate = FieldsExcelReport::INE_ALTERNATE;
+                $candidates = CandidateIne::join('candidates', 'candidate_ines.origin_candidate_id', '=', 'candidates.id')
+                    ->select('candidate_ines.*', 'candidates.user_id')
+                    ->where(function ($q) {
+                        $q->where('candidate_ines.type_postulate', CandidateIne::OWNER)
+                            ->orWhere('candidate_ines.postulate', CandidateIne::DIPUTACION_MR)
+                            ->orWhere('candidate_ines.postulate', CandidateIne::DIPUTACION_RP)
+                            ->orWhere('candidate_ines.postulate', CandidateIne::PRESIDENCIA);
+                    })
+                    ->where('candidate_ines.politic_party_id', $request->all()['politic_party_id'])
+                    ->orderBy('candidate_ines.politic_party_id')
+                    ->orderBy('candidate_ines.created_at')->get();
+
+            } else {
+                $data = FieldsExcelReport::INE_2;
+                $data_alternate = FieldsExcelReport::INE_2_ALTERNATE;
+                $candidates = CandidateIne::join('candidates', 'candidate_ines.origin_candidate_id', '=', 'candidates.id')
+                    ->select('candidate_ines.*', 'candidates.user_id')
+                    ->where('candidate_ines.type_postulate', CandidateIne::OWNER)
+                    ->where(function ($q){
+                        $q->orWhere('candidate_ines.postulate', CandidateIne::SINDICATURA)
+                            ->orWhere('candidate_ines.postulate', CandidateIne::REGIDURIA);
+                    })
+                    ->where('candidate_ines.politic_party_id', $request->all()['politic_party_id'])
+                    ->orderBy('candidate_ines.politic_party_id')
+                    ->orderBy('candidate_ines.created_at')->get();
+            }
         } else {
-            $candidates = CandidateIne::where('postulate', $request->all()['type'])
-                ->getOwner()
-                ->get();
+            if ($request->all()['type'] == 1) {
+                $data = FieldsExcelReport::INE;
+                $data_alternate = FieldsExcelReport::INE_ALTERNATE;
+                $candidates = CandidateIne::join('candidates', 'candidate_ines.origin_candidate_id', '=', 'candidates.id')
+                    ->select('candidate_ines.*', 'candidates.user_id')
+                    ->where(function ($q) {
+                        $q->where('candidate_ines.type_postulate', CandidateIne::OWNER)
+                            ->orWhere('candidate_ines.postulate', CandidateIne::DIPUTACION_MR)
+                            ->orWhere('candidate_ines.postulate', CandidateIne::DIPUTACION_RP)
+                            ->orWhere('candidate_ines.postulate', CandidateIne::PRESIDENCIA);
+                    })
+                    ->orderBy('candidate_ines.politic_party_id')
+                    ->orderBy('candidate_ines.created_at')->get();
+
+            } else {
+                $data = FieldsExcelReport::INE_2;
+                $data_alternate = FieldsExcelReport::INE_2_ALTERNATE;
+                $candidates = CandidateIne::join('candidates', 'candidate_ines.origin_candidate_id', '=', 'candidates.id')
+                    ->select('candidate_ines.*', 'candidates.user_id')
+                    ->where('candidate_ines.type_postulate', CandidateIne::OWNER)
+                    ->where(function ($q){
+                        $q->orWhere('candidate_ines.postulate', CandidateIne::SINDICATURA)
+                            ->orWhere('candidate_ines.postulate', CandidateIne::REGIDURIA);
+                    })
+                    ->orderBy('candidate_ines.politic_party_id')
+                    ->orderBy('candidate_ines.created_at')->get();
+            }
         }
         $i = 0;
         foreach ($candidates as $candidate) {
@@ -148,8 +191,6 @@ class CandidateIneController extends ApiController
                         $data_excel[$i][$key] = $candidate[$value];
                     }
                 }
-            } else {
-                return $this->errorResponse('Candidato sin suplente registrado', 404);
             }
             $i++;
         }
@@ -181,22 +222,37 @@ class CandidateIneController extends ApiController
 
         $data_excel = [];
         $array_key_alternate = [];
-
-        if ($request->all()['type'] == CandidateIne::DIPUTACION_RP || $request->all()['type'] == CandidateIne::DIPUTACION_MR || $request->all()['type'] == CandidateIne::PRESIDENCIA) {
+        $candidates = [];
+        if ($request->all()['type'] == 1) {
             $data = FieldsExcelReport::INE;
             $data_alternate = FieldsExcelReport::INE_ALTERNATE;
+            $candidates = CandidateIne::join('candidates', 'candidate_ines.origin_candidate_id', '=', 'candidates.id')
+                ->select('candidate_ines.*', 'candidates.user_id')
+                ->where('user_id', $request->all()['user_id'])
+                ->where(function ($q) {
+                    $q->where('candidate_ines.type_postulate', CandidateIne::OWNER)
+                        ->orWhere('candidate_ines.postulate', CandidateIne::DIPUTACION_MR)
+                        ->orWhere('candidate_ines.postulate', CandidateIne::DIPUTACION_RP)
+                        ->orWhere('candidate_ines.postulate', CandidateIne::PRESIDENCIA);
+                })
+                ->orderBy('candidate_ines.politic_party_id')
+                ->orderBy('candidate_ines.created_at')->get();
+
         } else {
             $data = FieldsExcelReport::INE_2;
             $data_alternate = FieldsExcelReport::INE_2_ALTERNATE;
-        }
+            $candidates = CandidateIne::join('candidates', 'candidate_ines.origin_candidate_id', '=', 'candidates.id')
+                ->select('candidate_ines.*', 'candidates.user_id')
+                ->where('user_id', $request->all()['user_id'])
+                ->where('candidate_ines.type_postulate', CandidateIne::OWNER)
+                ->where(function ($q){
+                    $q->orWhere('candidate_ines.postulate', CandidateIne::SINDICATURA)
+                        ->orWhere('candidate_ines.postulate', CandidateIne::REGIDURIA);
+                })
+                ->orderBy('candidate_ines.politic_party_id')
+                ->orderBy('candidate_ines.created_at')->get();
 
-        $candidates = CandidateIne::join('candidates', 'candidate_ines.origin_candidate_id', '=', 'candidates.id')
-            ->select('candidate_ines.*', 'candidates.user_id')
-            ->where('user_id', $request->all()['user_id'])
-            ->where('candidate_ines.postulate', $request->all()['type'])
-            ->where('candidate_ines.type_postulate', CandidateIne::OWNER)
-            ->orderBy('candidate_ines.politic_party_id')
-            ->orderBy('candidate_ines.created_at')->get();
+        }
 
         $i = 0;
         foreach ($candidates as $candidate) {
@@ -222,9 +278,10 @@ class CandidateIneController extends ApiController
                         $data_excel[$i][$key] = $candidate[$value];
                     }
                 }
-            } else {
-                return $this->errorResponse('Candidato sin suplente registrado', 404);
             }
+//            else {
+//                return $this->errorResponse('Candidato sin suplente registrado', 404);
+//            }
             $i++;
         }
 
