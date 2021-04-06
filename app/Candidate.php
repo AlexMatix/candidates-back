@@ -84,4 +84,9 @@ class Candidate extends Model
     public function scopeGetOwner($query){
         return $query->where('type_postulate',Self::OWNER)->orderBy('politic_party_id')->orderBy('created_at');
     }
+
+    public function scopeSearchInFields($query, $column, $value)
+    {
+        return $query->orWhere($column, 'like', '%' . $value . '%');
+    }
 }
