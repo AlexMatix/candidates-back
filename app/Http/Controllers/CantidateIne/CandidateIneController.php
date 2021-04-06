@@ -124,7 +124,6 @@ class CandidateIneController extends ApiController
                 ->getOwner()
                 ->get();
         }
-
         $i = 0;
         foreach ($candidates as $candidate) {
             //OWNER DATA

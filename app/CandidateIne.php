@@ -13,6 +13,8 @@ class CandidateIne extends Model
     const DIPUTACION_MR = 2;
     const REGIDURIA = 3;
     const SINDICATURA = 4;
+    const PRESIDENCIA = 5;
+    
     protected $fillable = [
         'father_lastname',
         'mother_lastname',
@@ -89,8 +91,6 @@ class CandidateIne extends Model
         'others',
         'considerations'
     ];
-
-    const PRESIDENCIA = 5;
 
     public function postulate(){
         return $this->belongsTo(Postulate::class);
