@@ -173,13 +173,13 @@ class CandidateIneController extends ApiController
                 } elseif ($key == 'Municipio') {
                     $postulate = Postulate::find($candidate->postulate_id);
                     $data_excel[$i][$key] = $postulate->municipality;
-                } elseif ($key == 'Correo electrónico') {
+                } elseif ($key == 'Correo electrónico' || $key == 'CORREO_ELECTRÓNICO') {
                     $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
-                } elseif ($key == 'Confirmación correo electronico') {
+                } elseif ($key == 'Confirmación correo electronico' || $key == 'CONFIRMACIÓN_CORREO') {
                     $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
-                } elseif ($key == 'Tipo de residencia en meses') {
+                } elseif ($key == 'Tipo de residencia en meses' || $key == 'TIEMPO_RESIDENCIA_MESES') {
                     $data_excel[$i][$key] = "";
-                } elseif ($key == 'Tipo candidatura') {
+                } elseif ($key == 'Tipo candidatura' || $key == 'TIPO_CANDIDATURA') {
                     $reportCandidate = [
                         "1" => 8,
                         "2" => 7,
@@ -188,7 +188,7 @@ class CandidateIneController extends ApiController
                         "5" => 9,
                     ];
                     $data_excel[$i][$key] = $reportCandidate[$candidate[$value]];
-                } elseif ($key == 'Fecha de nacimiento') {
+                } elseif ($key == 'Fecha de nacimiento' || $key = 'FECHA_NACIMIENTO') {
                     $date = date("d-m-Y", strtotime($candidate[$value]));
                     $data_excel[$i][$key] = $date;
                 }  else {
@@ -203,7 +203,7 @@ class CandidateIneController extends ApiController
                 foreach ($data_alternate as $key => $value) {
                     if ($key == 'Registra suplencia|') {
                         $data_excel[$i][$key] = 1;
-                    } elseif ($key == 'Tipo de residencia en meses|') {
+                    } elseif ($key == 'Tipo de residencia en meses|' || $key == 'RESIDENCIA_MESES_SUPLENCIA') {
                         $data_excel[$i][$key] = "";
                     } elseif ($key == 'Fecha de nacimiento|') {
                         $date = date("d-m-Y", strtotime($candidate[$value]));
