@@ -168,7 +168,7 @@ class CandidateController extends ApiController
 
     public function validateElectorKey(Request $request)
     {
-        $electorKey = $request->all()['elector_key'];
+        $electorKey = $request->all()['electorKey'];
         $id = $request->all()['id'] ?? null;
 
         if (is_null($id)) {
