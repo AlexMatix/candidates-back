@@ -9,12 +9,12 @@ class CandidateIne extends Model
     const OWNER = 1;
     const ALTERNATE = 2;
 
-    const DIPUTACION_RP= 1;
-    const DIPUTACION_MR = 2;
-    const REGIDURIA = 3;
-    const SINDICATURA = 4;
-    const PRESIDENCIA = 5;
-    
+    const DIPUTACION_RP= 1; //8
+    const DIPUTACION_MR = 2; //7
+    const REGIDURIA = 3; // 28
+    const SINDICATURA = 4; // 26
+    const PRESIDENCIA = 5; // 9
+
     protected $fillable = [
         'father_lastname',
         'mother_lastname',
@@ -72,6 +72,7 @@ class CandidateIne extends Model
         'salary_annual_income',
         'financial_performances',
         'annual_profit_professional_activity',
+        'annual_real_estate_lease_earnings',
         'annual_real_estate_lease_earnings',
         'professional_services_fees',
         'other_income',

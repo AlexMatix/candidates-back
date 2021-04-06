@@ -8,7 +8,9 @@ use App\Http\Controllers\ApiController;
 use App\Postulate;
 use App\Util\ExportExcel;
 use App\Util\FieldsExcelReport;
+use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
@@ -107,36 +109,32 @@ class CandidateIneController extends ApiController
         $array_key_alternate = [];
 
 
-
         if ($request->has('politic_party_id')) {
             if ($request->all()['type'] == 1) {
                 $data = FieldsExcelReport::INE;
                 $data_alternate = FieldsExcelReport::INE_ALTERNATE;
                 $candidates = CandidateIne::join('candidates', 'candidate_ines.origin_candidate_id', '=', 'candidates.id')
                     ->select('candidate_ines.*', 'candidates.user_id')
+                    ->where('candidate_ines.type_postulate', CandidateIne::OWNER)
                     ->where(function ($q) {
-                        $q->where('candidate_ines.type_postulate', CandidateIne::OWNER)
-                            ->orWhere('candidate_ines.postulate', CandidateIne::DIPUTACION_MR)
+                        $q->orWhere('candidate_ines.postulate', CandidateIne::DIPUTACION_MR)
                             ->orWhere('candidate_ines.postulate', CandidateIne::DIPUTACION_RP)
                             ->orWhere('candidate_ines.postulate', CandidateIne::PRESIDENCIA);
                     })
                     ->where('candidate_ines.politic_party_id', $request->all()['politic_party_id'])
-                    ->orderBy('candidate_ines.politic_party_id')
-                    ->orderBy('candidate_ines.created_at')->get();
-
+                    ->orderBy('candidate_ines.number_line')->get();
             } else {
                 $data = FieldsExcelReport::INE_2;
                 $data_alternate = FieldsExcelReport::INE_2_ALTERNATE;
                 $candidates = CandidateIne::join('candidates', 'candidate_ines.origin_candidate_id', '=', 'candidates.id')
                     ->select('candidate_ines.*', 'candidates.user_id')
                     ->where('candidate_ines.type_postulate', CandidateIne::OWNER)
-                    ->where(function ($q){
+                    ->where(function ($q) {
                         $q->orWhere('candidate_ines.postulate', CandidateIne::SINDICATURA)
                             ->orWhere('candidate_ines.postulate', CandidateIne::REGIDURIA);
                     })
                     ->where('candidate_ines.politic_party_id', $request->all()['politic_party_id'])
-                    ->orderBy('candidate_ines.politic_party_id')
-                    ->orderBy('candidate_ines.created_at')->get();
+                    ->orderBy('candidate_ines.number_line')->get();
             }
         } else {
             if ($request->all()['type'] == 1) {
@@ -150,8 +148,7 @@ class CandidateIneController extends ApiController
                             ->orWhere('candidate_ines.postulate', CandidateIne::DIPUTACION_RP)
                             ->orWhere('candidate_ines.postulate', CandidateIne::PRESIDENCIA);
                     })
-                    ->orderBy('candidate_ines.politic_party_id')
-                    ->orderBy('candidate_ines.created_at')->get();
+                    ->orderBy('candidate_ines.number_line')->get();
 
             } else {
                 $data = FieldsExcelReport::INE_2;
@@ -159,12 +156,11 @@ class CandidateIneController extends ApiController
                 $candidates = CandidateIne::join('candidates', 'candidate_ines.origin_candidate_id', '=', 'candidates.id')
                     ->select('candidate_ines.*', 'candidates.user_id')
                     ->where('candidate_ines.type_postulate', CandidateIne::OWNER)
-                    ->where(function ($q){
+                    ->where(function ($q) {
                         $q->orWhere('candidate_ines.postulate', CandidateIne::SINDICATURA)
                             ->orWhere('candidate_ines.postulate', CandidateIne::REGIDURIA);
                     })
-                    ->orderBy('candidate_ines.politic_party_id')
-                    ->orderBy('candidate_ines.created_at')->get();
+                    ->orderBy('candidate_ines.number_line')->get();
             }
         }
         $i = 0;
@@ -177,9 +173,29 @@ class CandidateIneController extends ApiController
                 } elseif ($key == 'Municipio') {
                     $postulate = Postulate::find($candidate->postulate_id);
                     $data_excel[$i][$key] = $postulate->municipality;
-                } else {
+                } elseif ($key == 'Correo electrónico') {
+                    $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
+                } elseif ($key == 'Confirmación correo electronico') {
+                    $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
+                } elseif ($key == 'Tipo de residencia en meses') {
+                    $data_excel[$i][$key] = "";
+                } elseif ($key == 'Tipo candidatura') {
+                    $reportCandidate = [
+                        "1" => 8,
+                        "2" => 7,
+                        "3" => 28,
+                        "4" => 26,
+                        "5" => 9,
+                    ];
+                    $data_excel[$i][$key] = $reportCandidate[$candidate[$value]];
+                } elseif ($key == 'Fecha de nacimiento') {
+                    $date = date("d-m-Y", strtotime($candidate[$value]));
+                    $data_excel[$i][$key] = $date;
+                }  else {
                     $data_excel[$i][$key] = $candidate[$value];
                 }
+
+
             }
 
             //ALTERNATE DATA
@@ -187,6 +203,21 @@ class CandidateIneController extends ApiController
                 foreach ($data_alternate as $key => $value) {
                     if ($key == 'Registra suplencia|') {
                         $data_excel[$i][$key] = 1;
+                    } elseif ($key == 'Tipo de residencia en meses|') {
+                        $data_excel[$i][$key] = "";
+                    } elseif ($key == 'Fecha de nacimiento|') {
+                        $date = date("d-m-Y", strtotime($candidate[$value]));
+                        $data_excel[$i][$key] = $date;
+                    }elseif ($key == 'Correo electrónico|') {
+                        $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
+                    } elseif ($key == 'Confirmación de correo electrónico|') {
+                        $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
+                    }elseif ($key == 'CORREO_ELECTRÓNICO_SUPLENCIA|') {
+                        $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
+                    } elseif ($key == 'CONFIRMACIÓN_CORREO_SUPLENCIA|') {
+                        $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
+                    }elseif ($key == 'FECHA_NACIMIENTO_SUPLENCIA|') {
+                        $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
                     } else {
                         $data_excel[$i][$key] = $candidate[$value];
                     }
@@ -245,7 +276,7 @@ class CandidateIneController extends ApiController
                 ->select('candidate_ines.*', 'candidates.user_id')
                 ->where('user_id', $request->all()['user_id'])
                 ->where('candidate_ines.type_postulate', CandidateIne::OWNER)
-                ->where(function ($q){
+                ->where(function ($q) {
                     $q->orWhere('candidate_ines.postulate', CandidateIne::SINDICATURA)
                         ->orWhere('candidate_ines.postulate', CandidateIne::REGIDURIA);
                 })
