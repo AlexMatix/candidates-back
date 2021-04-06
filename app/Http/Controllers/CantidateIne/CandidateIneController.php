@@ -167,6 +167,7 @@ class CandidateIneController extends ApiController
         foreach ($candidates as $candidate) {
             //OWNER DATA
             foreach ($data as $key => $value) {
+
                 if ($key == 'Distrito') {
                     $postulate = Postulate::find($candidate[$value]);
                     $data_excel[$i][$key] = $postulate->district;
@@ -188,14 +189,12 @@ class CandidateIneController extends ApiController
                         "5" => 9,
                     ];
                     $data_excel[$i][$key] = $reportCandidate[$candidate[$value]];
-                } elseif ($key == 'Fecha de nacimiento' || $key = 'FECHA_NACIMIENTO') {
+                } elseif ($key == 'Fecha de nacimiento' || $key == 'FECHA_NACIMIENTO') {
                     $date = date("d-m-Y", strtotime($candidate[$value]));
                     $data_excel[$i][$key] = $date;
-                }  else {
+                } else {
                     $data_excel[$i][$key] = $candidate[$value];
                 }
-
-
             }
 
             //ALTERNATE DATA
@@ -208,16 +207,15 @@ class CandidateIneController extends ApiController
                     } elseif ($key == 'Fecha de nacimiento|') {
                         $date = date("d-m-Y", strtotime($candidate[$value]));
                         $data_excel[$i][$key] = $date;
-                    }elseif ($key == 'Correo electrónico|') {
+                    } elseif ($key == 'Correo electrónico|') {
                         $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
                     } elseif ($key == 'Confirmación de correo electrónico|') {
                         $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
-                    }elseif ($key == 'CORREO_ELECTRÓNICO_SUPLENCIA|') {
-                        $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
                     } elseif ($key == 'CONFIRMACIÓN_CORREO_SUPLENCIA|') {
                         $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
-                    }elseif ($key == 'FECHA_NACIMIENTO_SUPLENCIA|') {
-                        $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
+                    } elseif ($key == 'FECHA_NACIMIENTO_SUPLENCIA|') {
+                        $date = date("d-m-Y", strtotime($candidate[$value]));
+                        $data_excel[$i][$key] = $date;
                     } else {
                         $data_excel[$i][$key] = $candidate[$value];
                     }
