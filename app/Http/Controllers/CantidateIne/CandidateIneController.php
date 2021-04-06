@@ -122,19 +122,24 @@ class CandidateIneController extends ApiController
                             ->orWhere('candidate_ines.postulate', CandidateIne::PRESIDENCIA);
                     })
                     ->where('candidate_ines.politic_party_id', $request->all()['politic_party_id'])
-                    ->orderBy('candidate_ines.number_line')->get();
+                    ->orderBy('candidate_ines.number_line')
+                    ->orderBy('candidate_ines.type_postulate')
+                    ->get();
             } else {
                 $data = FieldsExcelReport::INE_2;
                 $data_alternate = FieldsExcelReport::INE_2_ALTERNATE;
                 $candidates = CandidateIne::join('candidates', 'candidate_ines.origin_candidate_id', '=', 'candidates.id')
                     ->select('candidate_ines.*', 'candidates.user_id')
+                    ->groupBy('candidate_ines.postulate_id')
                     ->where('candidate_ines.type_postulate', CandidateIne::OWNER)
                     ->where(function ($q) {
                         $q->orWhere('candidate_ines.postulate', CandidateIne::SINDICATURA)
                             ->orWhere('candidate_ines.postulate', CandidateIne::REGIDURIA);
                     })
                     ->where('candidate_ines.politic_party_id', $request->all()['politic_party_id'])
-                    ->orderBy('candidate_ines.number_line')->get();
+                    ->orderBy('candidate_ines.number_line')
+                    ->orderBy('candidate_ines.type_postulate')
+                    ->get();
             }
         } else {
             if ($request->all()['type'] == 1) {
@@ -148,7 +153,9 @@ class CandidateIneController extends ApiController
                             ->orWhere('candidate_ines.postulate', CandidateIne::DIPUTACION_RP)
                             ->orWhere('candidate_ines.postulate', CandidateIne::PRESIDENCIA);
                     })
-                    ->orderBy('candidate_ines.number_line')->get();
+                    ->orderBy('candidate_ines.number_line')
+                    ->orderBy('candidate_ines.type_postulate')
+                    ->get();
 
             } else {
                 $data = FieldsExcelReport::INE_2;
@@ -160,7 +167,9 @@ class CandidateIneController extends ApiController
                         $q->orWhere('candidate_ines.postulate', CandidateIne::SINDICATURA)
                             ->orWhere('candidate_ines.postulate', CandidateIne::REGIDURIA);
                     })
-                    ->orderBy('candidate_ines.number_line')->get();
+                    ->orderBy('candidate_ines.number_line')
+                    ->orderBy('candidate_ines.type_postulate')
+                    ->get();
             }
         }
         $i = 0;
