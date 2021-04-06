@@ -17,44 +17,15 @@ use Illuminate\Support\Facades\Storage;
 class CandidateController extends ApiController
 {
 
-    public function index(Request $request)
+    public function index()
     {
         $user = Auth::user();
 
         if ($user->type === User::ADMIN) {
-            $candidates = Candidate::with('postulate_data');
+            $candidates = Candidate::with('postulate_data')->paginate(100);
         } else {
-            $candidates = Candidate::where('user_id', $user->id)->with('postulate_data');
+            $candidates = Candidate::where('user_id', $user->id)->with('postulate_data')->paginate(100);;
         }
-
-        if ($request->has('value')) {
-            $candidates = $candidates->where(function ($query) use ($request) {
-                $query->searchInFields('father_lastname', $request->all()['value'])
-                    ->searchInFields('mother_lastname', $request->all()['value'])
-                    ->searchInFields('name', $request->all()['value'])
-                    ->searchInFields('nickname', $request->all()['value'])
-                    ->searchInFields('roads', $request->all()['value'])
-                    ->searchInFields('roads_name', $request->all()['value'])
-                    ->searchInFields('outdoor_number', $request->all()['value'])
-                    ->searchInFields('interior_number', $request->all()['value'])
-                    ->searchInFields('neighborhood', $request->all()['value'])
-                    ->searchInFields('zipcode', $request->all()['value'])
-                    ->searchInFields('municipality', $request->all()['value'])
-                    ->searchInFields('elector_key', $request->all()['value'])
-                    ->searchInFields('ocr', $request->all()['value'])
-                    ->searchInFields('cic', $request->all()['value'])
-                    ->searchInFields('entity', $request->all()['value'])
-                    ->searchInFields('section', $request->all()['value'])
-                    ->searchInFields('birthplace', $request->all()['value'])
-                    ->searchInFields('occupation', $request->all()['value'])
-                    ->searchInFields('re_election', $request->all()['value'])
-                    ->searchInFields('indigenous_group', $request->all()['value'])
-                    ->searchInFields('group_sexual_diversity', $request->all()['value'])
-                    ->searchInFields('disabled_group', $request->all()['value']);
-            });
-        }
-
-        $candidates = $candidates->paginate(50);
 
         return $this->showList($candidates);
     }
@@ -117,7 +88,7 @@ class CandidateController extends ApiController
                             'elector_key', $candidate['owner']['elector_key']
                         )->first();
 
-                        if (!empty($checkCandidate)) {
+                        if(!empty($checkCandidate)){
                             continue;
                         }
 
@@ -269,9 +240,9 @@ class CandidateController extends ApiController
 
         if ($request->has('politic_party_id')) {
             $candidates = Candidate::where('postulate', $request->all()['type'])
-                    ->where('politic_party_id', $request->all()['politic_party_id'])
-                    ->get | Owner()
-                    ->get();
+                ->where('politic_party_id', $request->all()['politic_party_id'])
+                ->get|Owner()
+                ->get();
         } else {
             $candidates = Candidate::where('postulate', $request->all()['type'])
                 ->getOwner()
@@ -320,9 +291,9 @@ class CandidateController extends ApiController
 
         $user = Auth::user();
         $owners = Candidate::where([
-            ['user_id', '=', $user->id],
             ['postulate_id', '=', $postulate->id],
             ['type_postulate', '=', Candidate::OWNER],
+            ['politic_party_id', '=', $user->politic_party_id],
             ['postulate', '<>', Candidate::DIPUTACION_RP],
             ['postulate', '<>', Candidate::DIPUTACION_MR],
         ])->get();
