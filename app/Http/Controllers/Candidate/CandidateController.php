@@ -290,9 +290,8 @@ class CandidateController extends ApiController
     {
 
         $user = Auth::user();
-        $politic_party = PoliticParty::findOrFail($user->politic_party_id);
         $owners = Candidate::where([
-            ['politic_party_id', '=', $politic_party->id],
+            ['user_id', '=', $user->id],
             ['postulate_id', '=', $postulate->id],
             ['type_postulate', '=', Candidate::OWNER],
             ['postulate', '<>', Candidate::DIPUTACION_RP],
