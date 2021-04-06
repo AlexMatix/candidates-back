@@ -34,7 +34,6 @@ class CandidateIneController extends ApiController
         $this->validate($request, $rules);
 
         $candidateIne = new CandidateIne($request->all());
-        $candidateIne->number_list = ($request->has('number_list') && !is_null($request->all()['number_list'])) ? $request->all()['number_list'] : 0;
         $candidateIne->save();
 
         $candidate = Candidate::find($candidateIne->origin_candidate_id);
