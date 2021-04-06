@@ -84,6 +84,14 @@ class CandidateController extends ApiController
                             continue;
                         }
 
+                        $checkCandidate = Candidate::where(
+                            'elector_key', $candidate['owner']['elector_key']
+                        )->first();
+
+                        if(!empty($checkCandidate)){
+                            continue;
+                        }
+
                         unset($candidate['owner']['id']);
                         unset($candidate['alternate']['id']);
                         $owner = new Candidate($candidate['owner']);
@@ -159,7 +167,7 @@ class CandidateController extends ApiController
 
     public function validateElectorKey(Request $request)
     {
-        $electorKey = $request->all()['electorKey'];
+        $electorKey = $request->all()['elector_key'];
         $id = $request->all()['id'] ?? null;
 
         if (is_null($id)) {
