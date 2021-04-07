@@ -176,7 +176,6 @@ class CandidateController extends ApiController
         if (!is_null($alternate_ine)) {
             $alternate_ine->fill($request->all()['alternate']);
         }
-
         if (!is_null($candidate_ine)) {
             $candidate_ine->fill($request->all());
         }
@@ -189,8 +188,9 @@ class CandidateController extends ApiController
             }
         }
         if (!$alternate->isClean()) {
-            $candidate->user_id = $user->id;
+            $alternate->user_id = $user->id;
             $alternate->save();
+
             if (!is_null($alternate_ine)) {
                 $alternate_ine->save();
             }
@@ -476,9 +476,13 @@ class CandidateController extends ApiController
             ]
         ];
 
+        $reportPath = "";
+        $output = "";
+        $parameters = "";
+
         $data = \GuzzleHttp\json_encode($data);
         $pathJar = Storage::path('JasperReportGenerator/') . 'JasperReportGenerator.jar';
         $arguments = "$reportPath \"" . addslashes($data) . "\" --output=$output --parameters=\"$parameters\" --format=xls";
-        $exec = exec("java -jar $pathJar $arguments", $execO, $execR);
+        dd("java -jar $pathJar $arguments");
     }
 }
