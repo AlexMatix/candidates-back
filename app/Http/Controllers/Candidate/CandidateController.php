@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Storage;
 
 class CandidateController extends ApiController
 {
-
     public function index()
     {
         $user = Auth::user();
@@ -128,14 +127,12 @@ class CandidateController extends ApiController
         }
     }
 
-
     public function show(Candidate $candidate)
     {
         $candidate->postulate_data;
         $candidate->alternate;
         return $this->showOne($candidate);
     }
-
 
     public function update(Request $request, Candidate $candidate)
     {
@@ -322,7 +319,15 @@ class CandidateController extends ApiController
         $request->file->storeAs('ImportAux', 'LayoutCandidates.xlsx');
 
         $import = new ImportExcel($path . 'LayoutCandidates.xlsx');
-        $import->readExcel(2);
+        $dataToImport = $import->readExcel(2);
+
+        $candidate = [];
+        foreach (FieldsExcelReport::LAYOUT_DATA as $key => $value){
+            foreach ($dataToImport as $field){
+                $candidate[$value] = $field[$key];
+            }
+            dd($candidate);
+        }
     }
 
     public function createReportByUser(Request $request)

@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use phpDocumentor\Reflection\Types\Collection;
 
 class CandidateIneController extends ApiController
 {
@@ -122,15 +123,14 @@ class CandidateIneController extends ApiController
                             ->orWhere('candidate_ines.postulate', CandidateIne::PRESIDENCIA);
                     })
                     ->where('candidate_ines.politic_party_id', $request->all()['politic_party_id'])
+                    ->orderBy('candidate_ines.postulate')
                     ->orderBy('candidate_ines.number_line')
-                    ->orderBy('candidate_ines.type_postulate')
                     ->get();
             } else {
                 $data = FieldsExcelReport::INE_2;
                 $data_alternate = FieldsExcelReport::INE_2_ALTERNATE;
                 $candidates = CandidateIne::join('candidates', 'candidate_ines.origin_candidate_id', '=', 'candidates.id')
                     ->select('candidate_ines.*', 'candidates.user_id')
-                    ->groupBy('candidate_ines.postulate_id')
                     ->where('candidate_ines.type_postulate', CandidateIne::OWNER)
                     ->where(function ($q) {
                         $q->orWhere('candidate_ines.postulate', CandidateIne::SINDICATURA)
@@ -140,6 +140,14 @@ class CandidateIneController extends ApiController
                     ->orderBy('candidate_ines.number_line')
                     ->orderBy('candidate_ines.type_postulate')
                     ->get();
+
+                $candidates_aux = $candidates->groupBy('postulate_id');
+                $candidates_aux->all();
+
+                $candidates = collect();
+                foreach ($candidates_aux as $candidate){
+                    $candidates = $candidates->toBase()->merge($candidate);
+                }
             }
         } else {
             if ($request->all()['type'] == 1) {
@@ -153,8 +161,8 @@ class CandidateIneController extends ApiController
                             ->orWhere('candidate_ines.postulate', CandidateIne::DIPUTACION_RP)
                             ->orWhere('candidate_ines.postulate', CandidateIne::PRESIDENCIA);
                     })
+                    ->orderBy('candidate_ines.postulate')
                     ->orderBy('candidate_ines.number_line')
-                    ->orderBy('candidate_ines.type_postulate')
                     ->get();
 
             } else {
@@ -170,8 +178,17 @@ class CandidateIneController extends ApiController
                     ->orderBy('candidate_ines.number_line')
                     ->orderBy('candidate_ines.type_postulate')
                     ->get();
+
+                $candidates_aux = $candidates->groupBy('postulate_id');
+                $candidates_aux->all();
+
+                $candidates = collect();
+                foreach ($candidates_aux as $candidate){
+                    $candidates = $candidates->toBase()->merge($candidate);
+                }
             }
         }
+
         $i = 0;
         foreach ($candidates as $candidate) {
             //OWNER DATA
