@@ -123,6 +123,7 @@ class CandidateIneController extends ApiController
                             ->orWhere('candidate_ines.postulate', CandidateIne::PRESIDENCIA);
                     })
                     ->where('candidate_ines.politic_party_id', $request->all()['politic_party_id'])
+                    ->skipFields('Pendiente', -1)
                     ->orderBy('candidate_ines.postulate')
                     ->orderBy('candidate_ines.number_line')
                     ->get();
@@ -137,6 +138,7 @@ class CandidateIneController extends ApiController
                             ->orWhere('candidate_ines.postulate', CandidateIne::REGIDURIA);
                     })
                     ->where('candidate_ines.politic_party_id', $request->all()['politic_party_id'])
+                    ->skipFields('Pendiente', -1)
                     ->orderBy('candidate_ines.number_line')
                     ->orderBy('candidate_ines.type_postulate')
                     ->get();
@@ -161,6 +163,7 @@ class CandidateIneController extends ApiController
                             ->orWhere('candidate_ines.postulate', CandidateIne::DIPUTACION_RP)
                             ->orWhere('candidate_ines.postulate', CandidateIne::PRESIDENCIA);
                     })
+                    ->skipFields('Pendiente', -1)
                     ->orderBy('candidate_ines.postulate')
                     ->orderBy('candidate_ines.number_line')
                     ->get();
@@ -175,6 +178,7 @@ class CandidateIneController extends ApiController
                         $q->orWhere('candidate_ines.postulate', CandidateIne::SINDICATURA)
                             ->orWhere('candidate_ines.postulate', CandidateIne::REGIDURIA);
                     })
+                    ->skipFields('Pendiente', -1)
                     ->orderBy('candidate_ines.number_line')
                     ->orderBy('candidate_ines.type_postulate')
                     ->get();
@@ -293,6 +297,7 @@ class CandidateIneController extends ApiController
                         ->orWhere('candidate_ines.postulate', CandidateIne::DIPUTACION_RP)
                         ->orWhere('candidate_ines.postulate', CandidateIne::PRESIDENCIA);
                 })
+                ->skipFields('Pendiente', -1)
                 ->orderBy('candidate_ines.politic_party_id')
                 ->orderBy('candidate_ines.created_at')->get();
 
@@ -307,6 +312,7 @@ class CandidateIneController extends ApiController
                     $q->orWhere('candidate_ines.postulate', CandidateIne::SINDICATURA)
                         ->orWhere('candidate_ines.postulate', CandidateIne::REGIDURIA);
                 })
+                ->skipFields('Pendiente', -1)
                 ->orderBy('candidate_ines.politic_party_id')
                 ->orderBy('candidate_ines.created_at')->get();
 
