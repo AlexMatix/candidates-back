@@ -330,7 +330,7 @@ class CandidateController extends ApiController
 
         $import = new ImportExcel($path . 'LayoutCandidates.xlsx');
         $dataToImport = $import->readExcel(2);
-
+        dd($dataToImport);
         $candidate = [];
         foreach (FieldsExcelReport::LAYOUT_DATA as $key => $value) {
             foreach ($dataToImport as $field) {
