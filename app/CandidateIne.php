@@ -116,4 +116,36 @@ class CandidateIne extends Model
     public function scopeGetOwner($query){
         return $query->where('type_postulate',Self::OWNER)->orderBy('politic_party_id')->orderBy('created_at');
     }
+
+    public function scopeSkipFields($query, $text, $integer)
+    {
+        $special_fields = [
+            'id',
+            'emission',
+            'date_birth',
+            'residence_time_year',
+            'residence_time_month',
+            'postulate',
+            'type_postulate',
+            'ine_check',
+            'user_id',
+            'postulate_id',
+            'politic_party_id',
+            'candidate_id'
+        ];
+        $fields = array_diff($this->getFillable(), $special_fields);
+        foreach ($fields as $field) {
+            $query->where(function ($q) use ($field, $text, $integer) {
+                if ($field == 'roads') {
+                    $q->where($field, '<>', $integer)
+                        ->orWhereNull($field);
+                } else {
+                    $q->where($field, '<>', $text)
+                        ->orWhereNull($field);
+                }
+            });
+        }
+
+        return $query;
+    }
 }
