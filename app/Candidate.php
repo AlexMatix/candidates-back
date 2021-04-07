@@ -8,7 +8,7 @@ use phpDocumentor\Reflection\Types\Self_;
 class Candidate extends Model
 {
 
-    const DIPUTACION_RP= 1;//1
+    const DIPUTACION_RP = 1;//1
     const DIPUTACION_MR = 2;//1
     const REGIDURIA = 3;//2
     const SINDICATURA = 4;//2
@@ -57,36 +57,75 @@ class Candidate extends Model
         'user_id'
     ];
 
-    public function postulate(){
+    public function postulate()
+    {
         return $this->belongsTo(Postulate::class);
     }
 
-    public function postulate_data(){
+    public function postulate_data()
+    {
         return $this->belongsTo(Postulate::class, 'postulate_id');
     }
 
-    public function owner(){
+    public function owner()
+    {
         return $this->belongsTo(Candidate::class);
     }
 
-    public function alternate(){
+    public function alternate()
+    {
         return $this->hasOne(Candidate::class);
     }
 
-    public function copyCandidateIne(){
+    public function copyCandidateIne()
+    {
         return $this->hasOne(CandidateIne::class, 'origin_candidate_id');
     }
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function scopeGetOwner($query){
-        return $query->where('type_postulate',Self::OWNER)->orderBy('politic_party_id')->orderBy('created_at');
+    public function scopeGetOwner($query)
+    {
+        return $query->where('type_postulate', Self::OWNER)->orderBy('politic_party_id')->orderBy('created_at');
     }
 
     public function scopeSearchInFields($query, $column, $value)
     {
         return $query->orWhere($column, 'like', '%' . $value . '%');
+    }
+
+    public function scopeSkipFields($query, $text, $integer)
+    {
+        $special_fields = [
+            'id',
+            'emission',
+            'date_birth',
+            'residence_time_year',
+            'residence_time_month',
+            'postulate',
+            'type_postulate',
+            'ine_check',
+            'user_id',
+            'postulate_id',
+            'politic_party_id',
+            'candidate_id'
+        ];
+        $fields = array_diff($this->getFillable(), $special_fields);
+        foreach ($fields as $field) {
+            $query->where(function ($q) use ($field, $text, $integer) {
+                if ($field == 'roads') {
+                    $q->where($field, '<>', $integer)
+                        ->orWhereNull($field);
+                } else {
+                    $q->where($field, '<>', $text)
+                        ->orWhereNull($field);
+                }
+            });
+        }
+
+        return $query;
     }
 }

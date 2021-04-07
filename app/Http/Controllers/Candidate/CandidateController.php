@@ -241,24 +241,24 @@ class CandidateController extends ApiController
                 break;
         };
 
-//        $tes = new Candidate();
-////        print_r($tes->getFillable());
-
         if ($request->has('politic_party_id')) {
             $candidates = Candidate::where('postulate', $request->all()['type'])
                 ->where('politic_party_id', $request->all()['politic_party_id'])
                 ->getOwner()
+                ->skipFields('Pendiente', -1)
                 ->get();
         } else {
             $candidates = Candidate::where('postulate', $request->all()['type'])
                 ->getOwner()
+                ->skipFields('Pendiente', -1)
                 ->get();
         }
 
         foreach ($candidates as $candidate) {
-            $candidates_all[] = $candidate;
-            if (!is_null($candidate->alternate)) {
-                $candidates_all[] = $candidate->alternate;
+            $alternate = Candidate::where('candidate_id', $candidate->id)->skipFields('Pendiente', -1)->first();
+            if (!is_null($alternate)) {
+                $candidates_all[] = $candidate;
+                $candidates_all[] = $alternate;
             }
         }
 
@@ -367,12 +367,14 @@ class CandidateController extends ApiController
         $candidates = Candidate::where('postulate', $request->all()['type'])
             ->where('user_id', $request->all()['user_id'])
             ->getOwner()
+            ->skipFields('Pendiente', -1)
             ->get();
 
         foreach ($candidates as $candidate) {
-            $candidates_all[] = $candidate;
-            if (!is_null($candidate->alternate)) {
-                $candidates_all[] = $candidate->alternate;
+            $alternate = Candidate::where('candidate_id', $candidate->id)->skipFields('Pendiente', -1)->first();
+            if (!is_null($alternate)) {
+                $candidates_all[] = $candidate;
+                $candidates_all[] = $alternate;
             }
         }
 
