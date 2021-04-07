@@ -125,7 +125,8 @@ class CandidateIneController extends ApiController
                     ->where('candidate_ines.politic_party_id', $request->all()['politic_party_id'])
                     ->orderBy('candidate_ines.postulate')
                     ->orderBy('candidate_ines.number_line')
-                    ->get();
+                    ->toSql();
+                dd($candidates);
             } else {
                 $data = FieldsExcelReport::INE_2;
                 $data_alternate = FieldsExcelReport::INE_2_ALTERNATE;
