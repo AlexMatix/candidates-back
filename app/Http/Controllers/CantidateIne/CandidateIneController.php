@@ -330,7 +330,7 @@ class CandidateIneController extends ApiController
                     $data_excel[$i][$key] = $postulate->municipality;
                 } elseif ($key == 'Tipo de residencia en meses|' || $key == 'RESIDENCIA_MESES_SUPLENCIA') {
                     $data_excel[$i][$key] = "";
-                } elseif ($key == 'Fecha de nacimiento|') {
+                } elseif ($key == 'Fecha de nacimiento|' || $key == 'FECHA_NACIMIENTO') {
                     $date = date("d-m-Y", strtotime($candidate[$value]));
                     $data_excel[$i][$key] = $date;
                 } elseif ($key == 'Correo electrónico|') {
