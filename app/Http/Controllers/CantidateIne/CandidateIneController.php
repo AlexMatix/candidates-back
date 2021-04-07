@@ -145,7 +145,7 @@ class CandidateIneController extends ApiController
                 $candidates_aux->all();
 
                 $candidates = collect();
-                foreach ($candidates_aux as $candidate){
+                foreach ($candidates_aux as $candidate) {
                     $candidates = $candidates->toBase()->merge($candidate);
                 }
             }
@@ -183,7 +183,7 @@ class CandidateIneController extends ApiController
                 $candidates_aux->all();
 
                 $candidates = collect();
-                foreach ($candidates_aux as $candidate){
+                foreach ($candidates_aux as $candidate) {
                     $candidates = $candidates->toBase()->merge($candidate);
                 }
             }
@@ -218,6 +218,8 @@ class CandidateIneController extends ApiController
                 } elseif ($key == 'Fecha de nacimiento' || $key == 'FECHA_NACIMIENTO') {
                     $date = date("d-m-Y", strtotime($candidate[$value]));
                     $data_excel[$i][$key] = $date;
+                } elseif ($key == 'Sexo' || $key == 'SEXO') {
+                    $data_excel[$i][$key] = $candidate[$value] === 'HOMBRE' ? 'H' : 'M';
                 } else {
                     $data_excel[$i][$key] = $candidate[$value];
                 }
@@ -242,6 +244,8 @@ class CandidateIneController extends ApiController
                     } elseif ($key == 'FECHA_NACIMIENTO_SUPLENCIA|') {
                         $date = date("d-m-Y", strtotime($candidate[$value]));
                         $data_excel[$i][$key] = $date;
+                    }elseif ($key == 'Sexo|' || $key == 'SEXO_SUPLENCIA|') {
+                        $data_excel[$i][$key] = $candidate[$value] === 'HOMBRE' ? 'H' : 'M';
                     } else {
                         $data_excel[$i][$key] = $candidate[$value];
                     }
@@ -319,7 +323,25 @@ class CandidateIneController extends ApiController
                 } elseif ($key == 'Municipio') {
                     $postulate = Postulate::find($candidate->postulate_id);
                     $data_excel[$i][$key] = $postulate->municipality;
-                } else {
+                } elseif ($key == 'Tipo de residencia en meses|' || $key == 'RESIDENCIA_MESES_SUPLENCIA') {
+                    $data_excel[$i][$key] = "";
+                } elseif ($key == 'Fecha de nacimiento|') {
+                    $date = date("d-m-Y", strtotime($candidate[$value]));
+                    $data_excel[$i][$key] = $date;
+                } elseif ($key == 'Correo electrónico|') {
+                    $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
+                } elseif ($key == 'Confirmación de correo electrónico|') {
+                    $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
+                } elseif ($key == 'CONFIRMACIÓN_CORREO_SUPLENCIA|') {
+                    $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
+                } elseif ($key == 'FECHA_NACIMIENTO_SUPLENCIA|') {
+                    $date = date("d-m-Y", strtotime($candidate[$value]));
+                    $data_excel[$i][$key] = $date;
+                } elseif ($key == 'Sexo' || $key == 'SEXO') {
+                    $data_excel[$i][$key] = $candidate[$value] === 'HOMBRE' ? 'H' : 'M';
+                }elseif ($key == 'Sexo|' || $key == 'SEXO_SUPLENCIA|') {
+                    $data_excel[$i][$key] = $candidate[$value] === 'HOMBRE' ? 'H' : 'M';
+                }else {
                     $data_excel[$i][$key] = $candidate[$value];
                 }
             }
@@ -329,6 +351,20 @@ class CandidateIneController extends ApiController
                 foreach ($data_alternate as $key => $value) {
                     if ($key == 'Registra suplencia|') {
                         $data_excel[$i][$key] = 1;
+                    } elseif ($key == 'Tipo de residencia en meses|' || $key == 'RESIDENCIA_MESES_SUPLENCIA') {
+                        $data_excel[$i][$key] = "";
+                    } elseif ($key == 'Fecha de nacimiento|') {
+                        $date = date("d-m-Y", strtotime($candidate[$value]));
+                        $data_excel[$i][$key] = $date;
+                    } elseif ($key == 'Correo electrónico|') {
+                        $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
+                    } elseif ($key == 'Confirmación de correo electrónico|') {
+                        $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
+                    } elseif ($key == 'CONFIRMACIÓN_CORREO_SUPLENCIA|') {
+                        $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
+                    } elseif ($key == 'FECHA_NACIMIENTO_SUPLENCIA|') {
+                        $date = date("d-m-Y", strtotime($candidate[$value]));
+                        $data_excel[$i][$key] = $date;
                     } else {
                         $data_excel[$i][$key] = $candidate[$value];
                     }
