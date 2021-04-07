@@ -193,7 +193,6 @@ class CandidateIneController extends ApiController
         foreach ($candidates as $candidate) {
             //OWNER DATA
             foreach ($data as $key => $value) {
-
                 if ($key == 'Distrito') {
                     $postulate = Postulate::find($candidate[$value]);
                     $data_excel[$i][$key] = $postulate->district;
