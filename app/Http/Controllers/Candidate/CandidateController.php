@@ -77,7 +77,8 @@ class CandidateController extends ApiController
                         'alternate' => $newAlternate,
                     ]);
                 }
-            } else {
+            }
+            else {
                 foreach ($request->get('candidates')[0] as $candidate) {
                     if ($candidate['owner']['id'] == 0) {
                         if (empty($candidate['owner']['name'])) {
@@ -343,7 +344,7 @@ class CandidateController extends ApiController
                 break;
         };
 
-        $candidates = Candidate::where('postulate', $request->all()['type'])
+            $candidates = Candidate::where('postulate', $request->all()['type'])
             ->where('user_id', $request->all()['user_id'])
             ->getOwner()
             ->skipFields('Pendiente', -1)

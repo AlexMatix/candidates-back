@@ -54,3 +54,7 @@ Route::get('createReportIneByUser', 'CantidateIne\CandidateIneController@createR
 Route::resource('postulate','Postulate\PostulateController',['only' => ['show', 'index']]);
 Route::get('getMunicipalities', 'Postulate\PostulateController@getMunicipalities');
 //END POLITIC PARTY ROUTE
+
+//REPORTS ROTE
+Route::post('reportDiputadosByDistrictIne', 'CantidateIne\CandidateIneController@reportDiputadosByDistrictIne');
+//END REPORTS ROTE

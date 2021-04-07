@@ -116,4 +116,9 @@ class CandidateIne extends Model
     public function scopeGetOwner($query){
         return $query->where('type_postulate',Self::OWNER)->orderBy('politic_party_id')->orderBy('created_at');
     }
+
+    public function postulate_data()
+    {
+        return $this->belongsTo(Postulate::class, 'postulate_id');
+    }
 }
