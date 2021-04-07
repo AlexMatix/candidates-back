@@ -401,4 +401,9 @@ class CandidateIneController extends ApiController
 
         return $this->downloadFile($path . 'basic.xlsx');
     }
+
+    public function reportDiputadosByDistricIne()
+    {
+
+    }
 }
