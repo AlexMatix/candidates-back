@@ -139,10 +139,12 @@ class CandidateController extends ApiController
 
     public function update(Request $request, Candidate $candidate)
     {
+        $user = Auth::user();
         $alternate = Candidate::findOrFail($request->all()['alternate']['id']);
         $candidate->fill($request->all());
         $alternate->fill($request->all()['alternate']);
         if (!$candidate->isClean()) {
+            $candidate->user_id = $user->id;
             $candidate->save();
         }
         if (!$alternate->isClean()) {
