@@ -9,7 +9,7 @@ class CandidateIne extends Model
     const OWNER = 1;
     const ALTERNATE = 2;
 
-    const DIPUTACION_RP= 1; //8
+    const DIPUTACION_RP = 1; //8
     const DIPUTACION_MR = 2; //7
     const REGIDURIA = 3; // 28
     const SINDICATURA = 4; // 26
@@ -93,28 +93,34 @@ class CandidateIne extends Model
         'considerations'
     ];
 
-    public function postulate(){
+    public function postulate()
+    {
         return $this->belongsTo(Postulate::class);
     }
 
-    public function politicParty(){
+    public function politicParty()
+    {
         return $this->belongsTo(PoliticParty::class);
     }
 
-    public function owner(){
-        return $this->belongsTo(CandidateIne::class,'candidate_ine_id');
+    public function owner()
+    {
+        return $this->belongsTo(CandidateIne::class, 'candidate_ine_id');
     }
 
-    public function alternate(){
+    public function alternate()
+    {
         return $this->hasOne(CandidateIne::class);
     }
 
-    public function originCandidate(){
+    public function originCandidate()
+    {
         return $this->belongsTo(Candidate::class);
     }
 
-    public function scopeGetOwner($query){
-        return $query->where('type_postulate',Self::OWNER)->orderBy('politic_party_id')->orderBy('created_at');
+    public function scopeGetOwner($query)
+    {
+        return $query->where('type_postulate', Self::OWNER)->orderBy('politic_party_id')->orderBy('created_at');
     }
 
     public function scopeSkipFields($query, $text, $integer)
@@ -131,17 +137,47 @@ class CandidateIne extends Model
             'user_id',
             'postulate_id',
             'politic_party_id',
-            'candidate_id'
+            'candidate_id',
+            'number_line',
+            'number_list',
+            'circumscription',
+            'locality',
+            'demarcation',
+            'municipalities_council',
+            'list_number',
+            'campaign',
+            'phone_type',
+            'lada',
+            'total_annual_income',
+            'salary_annual_income',
+            'financial_performances',
+            'annual_profit_professional_activity',
+            'annual_real_estate_lease_earnings',
+            'professional_services_fees',
+            'other_income',
+            'total_annual_expenses',
+            'personal_expenses',
+            'real_estate_payments',
+            'debt_payments',
+            'loss_personal_activity',
+            'other_expenses',
+            'property',
+            'vehicles',
+            'other_movable_property',
+            'bank_accounts',
+            'other_assets',
+            'payment_debt_amount',
+            'other_passives',
         ];
         $fields = array_diff($this->getFillable(), $special_fields);
         foreach ($fields as $field) {
             $query->where(function ($q) use ($field, $text, $integer) {
                 if ($field == 'roads') {
-                    $q->where($field, '<>', $integer)
-                        ->orWhereNull($field);
+                    $q->where('candidate_ines.' . $field, '<>', $integer)
+                        ->orWhereNull('candidate_ines.' . $field);
                 } else {
-                    $q->where($field, '<>', $text)
-                        ->orWhereNull($field);
+                    $q->where('candidate_ines.' . $field, '<>', $text)
+                        ->orWhereNull('candidate_ines.' . $field);
                 }
             });
         }
