@@ -241,6 +241,9 @@ class CandidateController extends ApiController
                 break;
         };
 
+//        $tes = new Candidate();
+////        print_r($tes->getFillable());
+
         if ($request->has('politic_party_id')) {
             $candidates = Candidate::where('postulate', $request->all()['type'])
                 ->where('politic_party_id', $request->all()['politic_party_id'])
@@ -270,6 +273,11 @@ class CandidateController extends ApiController
                 } elseif ($key == 'NO_MPIO') {
                     $postulate = Postulate::find($candidate[$value]);
                     $data_excel[$i][$key] = $postulate->municipality_key;
+                } elseif ($key == 'TIEMPO_RESIDENCIA_MESES') {
+                    $data_excel[$i][$key] = "";
+                } elseif ($key == 'FECHA_NACIMIENTO') {
+                    $date = date("d-m-Y", strtotime($candidate[$value]));
+                    $data_excel[$i][$key] = $date;
                 } else {
                     $data_excel[$i][$key] = $candidate[$value];
                 }
@@ -324,8 +332,8 @@ class CandidateController extends ApiController
         $dataToImport = $import->readExcel(2);
 
         $candidate = [];
-        foreach (FieldsExcelReport::LAYOUT_DATA as $key => $value){
-            foreach ($dataToImport as $field){
+        foreach (FieldsExcelReport::LAYOUT_DATA as $key => $value) {
+            foreach ($dataToImport as $field) {
                 $candidate[$value] = $field[$key];
             }
             dd($candidate);
@@ -379,6 +387,11 @@ class CandidateController extends ApiController
                 } elseif ($key == 'NO_MPIO') {
                     $postulate = Postulate::find($candidate[$value]);
                     $data_excel[$i][$key] = $postulate->municipality_key;
+                } elseif ($key == 'TIEMPO_RESIDENCIA_MESES') {
+                    $data_excel[$i][$key] = "";
+                } elseif ($key == 'FECHA_NACIMIENTO') {
+                    $date = date("d-m-Y", strtotime($candidate[$value]));
+                    $data_excel[$i][$key] = $date;
                 } else {
                     $data_excel[$i][$key] = $candidate[$value];
                 }
