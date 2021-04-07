@@ -152,6 +152,7 @@ class CandidateController extends ApiController
             $candidate_ine->save();
         }
         if (!$alternate->isClean()) {
+            $candidate->user_id = $user->id;
             $alternate->save();
             $alternate_ine->save();
         }
@@ -326,28 +327,6 @@ class CandidateController extends ApiController
         return $this->showList($dataReturn);
     }
 
-    public function importLayout(Request $request)
-    {
-        $path = Storage::path('ImportAux/');
-
-        if (!File::exists($path)) {
-            File::makeDirectory($path, 0777, true, true);
-        }
-
-        $request->file->storeAs('ImportAux', 'LayoutCandidates.xlsx');
-
-        $import = new ImportExcel($path . 'LayoutCandidates.xlsx');
-        $dataToImport = $import->readExcel(2);
-        dd($dataToImport);
-        $candidate = [];
-        foreach (FieldsExcelReport::LAYOUT_DATA as $key => $value) {
-            foreach ($dataToImport as $field) {
-                $candidate[$value] = $field[$key];
-            }
-            dd($candidate);
-        }
-    }
-
     public function createReportByUser(Request $request)
     {
         $rules = [
@@ -419,5 +398,31 @@ class CandidateController extends ApiController
         $report->createExcel($data_excel, array_keys($data));
 
         return $this->downloadFile($path . 'basic.xlsx');
+    }
+
+    public function importLayout(Request $request)
+    {
+        $path = Storage::path('ImportAux/');
+
+        if (!File::exists($path)) {
+            File::makeDirectory($path, 0777, true, true);
+        }
+
+        $request->file->storeAs('ImportAux', 'LayoutCandidates.xlsx');
+
+        $import = new ImportExcel($path . 'LayoutCandidates.xlsx');
+        $dataToImport = $import->readExcel(2);
+        dd($dataToImport);
+        $candidate = [];
+        foreach (FieldsExcelReport::LAYOUT_DATA as $key => $value) {
+            foreach ($dataToImport as $field) {
+                if(empty($key) || empty($value)){
+                    continue;
+                }
+
+                $candidate[$value] = $field[$key];
+            }
+        }
+        dd($candidate);
     }
 }
