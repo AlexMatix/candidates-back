@@ -34,13 +34,14 @@ Route::get('validate_elector_key', 'Candidate\CandidateController@validateElecto
 Route::get('validate_elector_ocr', 'Candidate\CandidateController@validateOCR');
 Route::get('getAyuntamiento/{postulate}', 'Candidate\CandidateController@getAyuntamiento');
 Route::post('importLayout', 'Candidate\CandidateController@importLayout');
+Route::get('reportCityHall', 'Candidate\CandidateController@getReportCityHall');
 //END CANDIDATE RUTE
 
 //POLITIC PARTY ROUTE
 Route::resource('politicParty','PoliticParty\PoliticPartyController',['only' => ['index']]);
 //END POLITIC PARTY ROUTE
 
-//CANDIDATE ROUTE
+//CANDIDATE INE ROUTE
 Route::resource('candidateIne','CantidateIne\CandidateIneController',['only' => ['index','store']]);
 Route::get('candidateIne/{candidate}', 'CantidateIne\CandidateIneController@show');
 Route::put('candidateIne/{candidate}', 'CantidateIne\CandidateIneController@update');
@@ -48,7 +49,7 @@ Route::delete('candidateIne/{candidate}', 'CantidateIne\CandidateIneController@d
 
 Route::get('createReportIne', 'CantidateIne\CandidateIneController@createReportINE');
 Route::get('createReportIneByUser', 'CantidateIne\CandidateIneController@createReportINEByUser');
-//END CANDIDATE ROUTE
+//END CANDIDATE INE ROUTE
 
 //POLITIC PARTY ROUTE
 Route::resource('postulate','Postulate\PostulateController',['only' => ['show', 'index']]);
