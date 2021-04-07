@@ -288,9 +288,9 @@ class CandidateIneController extends ApiController
             $candidates = CandidateIne::join('candidates', 'candidate_ines.origin_candidate_id', '=', 'candidates.id')
                 ->select('candidate_ines.*', 'candidates.user_id')
                 ->where('user_id', $request->all()['user_id'])
+                ->where('candidate_ines.type_postulate', CandidateIne::OWNER)
                 ->where(function ($q) {
-                    $q->where('candidate_ines.type_postulate', CandidateIne::OWNER)
-                        ->orWhere('candidate_ines.postulate', CandidateIne::DIPUTACION_MR)
+                    $q->orWhere('candidate_ines.postulate', CandidateIne::DIPUTACION_MR)
                         ->orWhere('candidate_ines.postulate', CandidateIne::DIPUTACION_RP)
                         ->orWhere('candidate_ines.postulate', CandidateIne::PRESIDENCIA);
                 })
@@ -341,6 +341,15 @@ class CandidateIneController extends ApiController
                     $data_excel[$i][$key] = $candidate[$value] === 'HOMBRE' ? 'H' : 'M';
                 }elseif ($key == 'Sexo|' || $key == 'SEXO_SUPLENCIA|') {
                     $data_excel[$i][$key] = $candidate[$value] === 'HOMBRE' ? 'H' : 'M';
+                }elseif ($key == 'Tipo candidatura' || $key == 'TIPO_CANDIDATURA') {
+                    $reportCandidate = [
+                        "1" => 8,
+                        "2" => 7,
+                        "3" => 28,
+                        "4" => 26,
+                        "5" => 9,
+                    ];
+                    $data_excel[$i][$key] = $reportCandidate[$candidate[$value]];
                 }else {
                     $data_excel[$i][$key] = $candidate[$value];
                 }
