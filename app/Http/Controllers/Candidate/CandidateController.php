@@ -17,16 +17,44 @@ use Illuminate\Support\Facades\Storage;
 
 class CandidateController extends ApiController
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
 
         if ($user->type === User::ADMIN) {
-            $candidates = Candidate::with('postulate_data')->paginate(100);
+            $candidates = Candidate::with('postulate_data');
         } else {
-            $candidates = Candidate::where('user_id', $user->id)->with('postulate_data')->paginate(100);;
+            $candidates = Candidate::where('user_id', $user->id)->with('postulate_data');
         }
 
+        if ($request->has('value')) {
+            $candidates = $candidates->where(function ($query) use ($request) {
+                $query->searchInFields('father_lastname', $request->all()['value'])
+                    ->searchInFields('mother_lastname', $request->all()['value'])
+                    ->searchInFields('name', $request->all()['value'])
+                    ->searchInFields('nickname', $request->all()['value'])
+                    ->searchInFields('roads', $request->all()['value'])
+                    ->searchInFields('roads_name', $request->all()['value'])
+                    ->searchInFields('outdoor_number', $request->all()['value'])
+                    ->searchInFields('interior_number', $request->all()['value'])
+                    ->searchInFields('neighborhood', $request->all()['value'])
+                    ->searchInFields('zipcode', $request->all()['value'])
+                    ->searchInFields('municipality', $request->all()['value'])
+                    ->searchInFields('elector_key', $request->all()['value'])
+                    ->searchInFields('ocr', $request->all()['value'])
+                    ->searchInFields('cic', $request->all()['value'])
+                    ->searchInFields('entity', $request->all()['value'])
+                    ->searchInFields('section', $request->all()['value'])
+                    ->searchInFields('birthplace', $request->all()['value'])
+                    ->searchInFields('occupation', $request->all()['value'])
+                    ->searchInFields('re_election', $request->all()['value'])
+                    ->searchInFields('indigenous_group', $request->all()['value'])
+                    ->searchInFields('group_sexual_diversity', $request->all()['value'])
+                    ->searchInFields('disabled_group', $request->all()['value']);
+            });
+        }
+
+        $candidates = $candidates->paginate(100);
         return $this->showList($candidates);
     }
 
@@ -146,7 +174,7 @@ class CandidateController extends ApiController
         $alternate->fill($request->all()['alternate']);
         $candidate_ine->fill($request->all());
         $alternate_ine->fill($request->all()['alternate']);
-        
+
         if (!$candidate->isClean()) {
             $candidate->user_id = $user->id;
             $candidate->save();
@@ -417,7 +445,7 @@ class CandidateController extends ApiController
         $candidate = [];
         foreach (FieldsExcelReport::LAYOUT_DATA as $key => $value) {
             foreach ($dataToImport as $field) {
-                if(empty($key) || empty($value)){
+                if (empty($key) || empty($value)) {
                     continue;
                 }
 
