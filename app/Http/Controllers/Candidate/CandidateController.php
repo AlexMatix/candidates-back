@@ -139,15 +139,23 @@ class CandidateController extends ApiController
     {
         $user = Auth::user();
         $alternate = Candidate::findOrFail($request->all()['alternate']['id']);
+        $candidate_ine = $candidate->copyCandidateIne;
+        $alternate_ine = $alternate->copyCandidateIne;
+
         $candidate->fill($request->all());
         $alternate->fill($request->all()['alternate']);
+        $candidate_ine->fill($request->all());
+        $alternate_ine->fill($request->all()['alternate']);
+        
         if (!$candidate->isClean()) {
             $candidate->user_id = $user->id;
             $candidate->save();
+            $candidate_ine->save();
         }
         if (!$alternate->isClean()) {
             $candidate->user_id = $user->id;
             $alternate->save();
+            $alternate_ine->save();
         }
         $candidate->alternate;
         return $this->showOne($candidate);
