@@ -240,7 +240,7 @@ class CandidateIneController extends ApiController
                         $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
                     } elseif ($key == 'CONFIRMACIÓN_CORREO_SUPLENCIA|') {
                         $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
-                    } elseif ($key == 'FECHA_NACIMIENTO_SUPLENCIA|') {
+                    } elseif ($key == 'FECHA_NACIMIENTO_SUPLENCIA|' || $key == "Fecha de nacimiento|") {
                         $date = date("d-m-Y", strtotime($candidate[$value]));
                         $data_excel[$i][$key] = $date;
                     }elseif ($key == 'Sexo|' || $key == 'SEXO_SUPLENCIA|') {

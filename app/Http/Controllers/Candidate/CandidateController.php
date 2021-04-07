@@ -241,6 +241,9 @@ class CandidateController extends ApiController
                 break;
         };
 
+//        $tes = new Candidate();
+////        print_r($tes->getFillable());
+
         if ($request->has('politic_party_id')) {
             $candidates = Candidate::where('postulate', $request->all()['type'])
                 ->where('politic_party_id', $request->all()['politic_party_id'])
