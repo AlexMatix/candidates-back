@@ -172,18 +172,28 @@ class CandidateController extends ApiController
 
         $candidate->fill($request->all());
         $alternate->fill($request->all()['alternate']);
-        $candidate_ine->fill($request->all());
-        $alternate_ine->fill($request->all()['alternate']);
+
+        if (!is_null($alternate_ine)) {
+            $alternate_ine->fill($request->all()['alternate']);
+        }
+
+        if (!is_null($candidate_ine)) {
+            $candidate_ine->fill($request->all());
+        }
 
         if (!$candidate->isClean()) {
             $candidate->user_id = $user->id;
             $candidate->save();
-            $candidate_ine->save();
+            if (!is_null($candidate_ine)) {
+                $candidate_ine->save();
+            }
         }
         if (!$alternate->isClean()) {
             $candidate->user_id = $user->id;
             $alternate->save();
-            $alternate_ine->save();
+            if (!is_null($alternate_ine)) {
+                $alternate_ine->save();
+            }
         }
         $candidate->alternate;
         return $this->showOne($candidate);
@@ -453,5 +463,22 @@ class CandidateController extends ApiController
             }
         }
         dd($candidate);
+    }
+
+    public function getReportCityHall()
+    {
+        $data = [
+            'municipality' => 'x',
+            "charges" => [
+                "charge" => "x",
+                "owner" => "x",
+                "alternate" => "x"
+            ]
+        ];
+
+        $data = \GuzzleHttp\json_encode($data);
+        $pathJar = Storage::path('JasperReportGenerator/') . 'JasperReportGenerator.jar';
+        $arguments = "$reportPath \"" . addslashes($data) . "\" --output=$output --parameters=\"$parameters\" --format=xls";
+        $exec = exec("java -jar $pathJar $arguments", $execO, $execR);
     }
 }
