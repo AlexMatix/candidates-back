@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Candidate;
 
 use App\Candidate;
+use App\CandidateIne;
 use App\PoliticParty;
 use App\Postulate;
 use App\User;
@@ -105,8 +106,7 @@ class CandidateController extends ApiController
                         'alternate' => $newAlternate,
                     ]);
                 }
-            }
-            else {
+            } else {
                 foreach ($request->get('candidates')[0] as $candidate) {
                     if ($candidate['owner']['id'] == 0) {
                         if (empty($candidate['owner']['name'])) {
@@ -390,7 +390,7 @@ class CandidateController extends ApiController
                 break;
         };
 
-            $candidates = Candidate::where('postulate', $request->all()['type'])
+        $candidates = Candidate::where('postulate', $request->all()['type'])
             ->where('user_id', $request->all()['user_id'])
             ->getOwner()
             ->skipFields('Pendiente', -1)
@@ -451,18 +451,61 @@ class CandidateController extends ApiController
 
         $import = new ImportExcel($path . 'LayoutCandidates.xlsx');
         $dataToImport = $import->readExcel(2);
-        dd($dataToImport);
-        $candidate = [];
-        foreach (FieldsExcelReport::LAYOUT_DATA as $key => $value) {
-            foreach ($dataToImport as $field) {
+        $candidateResult = [];
+        $i = 1;
+        foreach ($dataToImport as $field) {
+            $candidate = [];
+            foreach (FieldsExcelReport::LAYOUT_DATA as $key => $value) {
                 if (empty($key) || empty($value)) {
                     continue;
                 }
 
-                $candidate[$value] = $field[$key];
+                if ($value == 'date_birth') {
+                    $candidate[$value] = empty($field[$key]) ? '' : $field[$key]->format("Y-m-d");
+                } elseif ($value == 'residence_time_month') {
+                    $candidate[$value] = 0;
+                } elseif ($value == 'number_list') {
+                    $candidate[$value] = 1;
+                }elseif ($value == 'circumscription') {
+                    $candidate[$value] = 1;
+                }elseif ($value == 'locality') {
+                    $candidate[$value] = 1;
+                } else {
+
+                    $candidate[$value] = isset($field[$key]) ? $field[$key] : '';
+                }
             }
+            if (($candidate['type_postulate']) == 2) {
+                $candidateResult[$i - 1]['alternate'] = $candidate;
+            } else {
+                $candidateResult[$i]['owner'] = $candidate;
+            }
+            $i++;
         }
-        dd($candidate);
+
+        foreach ($candidateResult as $candidate) {
+            $owner = new Candidate($candidate['owner']);
+            $owner->postulate_id = 65;
+            $owner->politic_party_id = 1;
+            $owner->save();
+            $alternate = new Candidate($candidate['alternate']);
+            $alternate->candidate_id = $owner->id;
+            $alternate->postulate_id = 65;
+            $alternate->politic_party_id = 1;
+            $alternate->save();
+
+            $candidateIneOwner = new CandidateIne($candidate['owner']);
+            $candidateIneOwner->origin_candidate_id = $owner->id;
+            $candidateIneOwner->politic_party_id = 1;
+            $candidateIneOwner->save();
+
+            $candidateIneAlternate = new CandidateIne($candidate['alternate']);
+            $candidateIneAlternate->origin_candidate_id = $alternate->id;
+            $candidateIneAlternate->candidate_ine_id = $candidateIneOwner->id;
+            $candidateIneAlternate->politic_party_id = 1;
+            $candidateIneAlternate->save();
+
+        }
     }
 
     public function getReportCityHall()

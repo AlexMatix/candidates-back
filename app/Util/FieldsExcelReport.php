@@ -6,7 +6,7 @@ class FieldsExcelReport
 {
     const DMR = [
         "DISTIRTO" => "postulate_id",
-        "No_CARGO" => "type_postulate",
+        "No_CARGO" => "postulate",
         "CARGO" => "type_postulate",
         "APELLIDO_PATERNO" => "father_lastname",
         "APELLIDO_MATERNO" => "mother_lastname",
@@ -302,6 +302,7 @@ class FieldsExcelReport
         "MONTO_ADEUDO_PAGO" => "payment_debt_amount",
         "OTROS_PASIVOS" => "other_passives",
         "OTROS" => "others",
-        "CONSIDERACIONES" => "considerations"
+        "CONSIDERACIONES" => "considerations",
+        "ID DEL USUARIO" => "user_id"
     ];
 }
