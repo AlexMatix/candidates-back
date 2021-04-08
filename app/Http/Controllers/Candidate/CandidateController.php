@@ -173,11 +173,12 @@ class CandidateController extends ApiController
         $candidate->fill($request->all());
         $alternate->fill($request->all()['alternate']);
 
-        if (!is_null($alternate_ine)) {
-            $alternate_ine->fill($request->all()['alternate']);
-        }
         if (!is_null($candidate_ine)) {
             $candidate_ine->fill($request->all());
+        }
+
+        if (!is_null($alternate_ine)) {
+            $alternate_ine->fill($request->all()['alternate']);
         }
 
         if (!$candidate->isClean()) {
@@ -187,6 +188,7 @@ class CandidateController extends ApiController
                 $candidate_ine->save();
             }
         }
+
         if (!$alternate->isClean()) {
             $alternate->user_id = $user->id;
             $alternate->save();
@@ -199,14 +201,20 @@ class CandidateController extends ApiController
         return $this->showOne($candidate);
     }
 
-    private function updateCandidates($request, Candidate $candidate)
+    private function updateCandidates($request, $candidate)
     {
         $rules = [
             'date_birth' => 'date',
         ];
 
+        $candidate_ine = $candidate->copyCandidateIne;
         $candidate->fill($request);
         $candidate->save();
+
+        if (!is_null($candidate_ine)) {
+            $candidate_ine->fill($request);
+            $candidate_ine->save();
+        }
     }
 
     public function destroy(Candidate $candidate)
@@ -508,20 +516,79 @@ class CandidateController extends ApiController
         }
     }
 
-    public function getReportCityHall()
+    public function getReportCityHall(Request $request)
     {
-        $data = [
-            'municipality' => 'x',
-            "charges" => [
-                "charge" => "x",
-                "owner" => "x",
-                "alternate" => "x"
-            ]
+        $rules = [
+            'postulate_id' => 'required',
+            'politic_party_id' => 'required'
         ];
+
+        $this->validate($request, $rules);
+
+        $candidates = Candidate::where('postulate_id', $request->all()['postulate_id'])
+            ->where('politic_party_id', $request->all()['politic_party_id'])
+            ->where(function ($q) {
+                $q->orWhere('postulate', Candidate::SINDICATURA)
+                    ->orWhere('postulate', Candidate::REGIDURIA)
+                    ->orWhere('postulate', Candidate::PRESIDENCIA);
+            })
+            ->getOwner()
+            ->skipFields('Pendiente', -1)
+            ->get();
+
+        $candidates_aux = $candidates->groupBy('postulate');
+        $candidates_aux->all();
+        $candidates = collect();
+
+        if(isset($candidates_aux[Candidate::PRESIDENCIA])){
+            $candidates = $candidates->toBase()->merge($candidates_aux[Candidate::PRESIDENCIA]);
+        }
+        if(isset($candidates_aux[Candidate::REGIDURIA])){
+            $candidates = $candidates->toBase()->merge($candidates_aux[Candidate::REGIDURIA]);
+        }
+        if(isset($candidates_aux[Candidate::SINDICATURA])){
+            $candidates = $candidates->toBase()->merge($candidates_aux[Candidate::SINDICATURA]);
+        }
+
+        $candidates_all = array();
+
+        $i = 0;
+        foreach ($candidates as $candidate){
+            $alternate = Candidate::where('candidate_id', $candidate->id)->skipFields('Pendiente', -1)->first();
+            if (!is_null($alternate)) {
+
+                switch ($candidate->postulate){
+                    case Candidate::PRESIDENCIA:
+                        $charge = 'PRESIDENCIA';
+                        break;
+                    case Candidate::REGIDURIA:
+                        $charge = 'REGIDURIA';
+                        break;
+                    case Candidate::SINDICATURA:
+                        $charge = 'SINDICATURA';
+                        break;
+                    default:
+                        $charge = '';
+                        break;
+                }
+
+                $candidates_all[$i]['charge'] = $charge;
+                $candidates_all[$i]['owner'] = $candidate;
+                $candidates_all[$i]['alternate'] = $alternate;
+
+                $i++;
+            }
+        }
+
+        $postulate = Postulate::find($request->all()['postulate_id']);
 
         $reportPath = "";
         $output = "";
         $parameters = "";
+        $data = [
+            'municipality' => $postulate->municipality,
+            "charges" => $candidates_all
+        ];
 
         $data = \GuzzleHttp\json_encode($data);
         $pathJar = Storage::path('JasperReportGenerator/') . 'JasperReportGenerator.jar';
