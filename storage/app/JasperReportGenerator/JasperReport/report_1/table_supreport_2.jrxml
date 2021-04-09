@@ -599,7 +599,7 @@
 						<font size="14"/>
 						<paragraph firstLineIndent="5"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{charge}+" "+$F{ordinal}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{ordinal}+" "+$F{charge}]]></textFieldExpression>
 				</textField>
 			</frame>
 		</band>
