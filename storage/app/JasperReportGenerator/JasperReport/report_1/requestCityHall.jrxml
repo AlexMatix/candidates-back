@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.16.0.final using JasperReports Library version 6.16.0-48579d909b7943b64690c65c71e07e0b80981928  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="requestCityHall" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="40c3a847-34eb-4936-8d5e-72e7f2671ca9">
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapter.xml"/>
+	<parameter name="subreportsPath" class="java.lang.String"/>
+	<queryString language="JSON">
+		<![CDATA[]]>
+	</queryString>
+	<field name="municipality" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="municipality"/>
+		<fieldDescription><![CDATA[municipality]]></fieldDescription>
+	</field>
+	<field name="charges" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="charges"/>
+		<fieldDescription><![CDATA[charges]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="40" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="10" width="572" height="30" uuid="262cf834-563b-4460-9f1e-ff9bd775c009"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SOLICITUD DE REGISTRO PARA MIEMBROS DE AYUNTAMIENTOS]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="199">
+			<frame>
+				<reportElement x="0" y="10" width="572" height="189" uuid="86b0263d-8b8b-48c2-b4e6-b68cd450d1f3"/>
+				<textField>
+					<reportElement x="0" y="0" width="310" height="30" uuid="a9f3b5bd-e1d0-4bc4-9b6c-092fc571687a"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["C. Miguel Angel Garcia Onofre"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="30" width="310" height="40" uuid="39369dcd-dabc-45c6-9cf9-f65422468ed6"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CONSEJERO PRESIDENTE DEL CONSEJO GENERAL DEL INSTITUTO ELECTORAL DEL ESTADO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="70" width="310" height="30" uuid="d6ccb836-1262-4ea6-9b8d-ca2a9c42eeaf"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[P R E S E N T E]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="0" y="110" width="572" height="79" uuid="3844d67c-1f5c-4ba8-9336-ceca5d5ced5c"/>
+					<textElement textAlignment="Justified">
+						<font size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Con fundamento en lo dispuesto por los artículos 42 fracción V y 206 fracción III del Código de Instituciones y Procesos Electorales del Estado de Puebla, por medio del presente escrito solicito el registro de la planilla de candidaturas, propietarios y suplentes, a miembros del ayuntamiento del municipio de "+$F{municipality}+ " que contenderán en la Jornada Electoral del Proceso Estatal Ordinario 2020-2021, siendo la siguiente:"]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+		<band height="110">
+			<subreport>
+				<reportElement x="0" y="0" width="572" height="110" uuid="46088e7c-2512-4bd5-9eec-b04a35bbbcd9"/>
+				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("charges")]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{subreportsPath}+"table_supreport_1.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="49">
+			<staticText>
+				<reportElement x="0" y="10" width="572" height="39" uuid="bf90b18e-2cf4-4941-a978-7cabb30e4e0e">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[A fin de dar cumplimiento a lo establecido en el artículo 208 del Código de la materia, se especifican a continuación los datos personales de cada una de las candidaturas anteriormente citadas.]]></text>
+			</staticText>
+		</band>
+		<band height="123">
+			<subreport>
+				<reportElement x="0" y="10" width="572" height="113" uuid="a63ab88a-4750-4a59-8f88-26e7397c12a2">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JsonDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("charges")]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{subreportsPath}+"table_supreport_2.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>
