@@ -49,6 +49,7 @@ Route::delete('candidateIne/{candidate}', 'CantidateIne\CandidateIneController@d
 
 Route::get('createReportIne', 'CantidateIne\CandidateIneController@createReportINE');
 Route::get('createReportIneByUser', 'CantidateIne\CandidateIneController@createReportINEByUser');
+Route::get('createSpecialReport', 'CantidateIne\CandidateIneController@createSpecialReportINE');
 //END CANDIDATE INE ROUTE
 
 //POLITIC PARTY ROUTE

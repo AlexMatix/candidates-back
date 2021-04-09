@@ -181,6 +181,7 @@ class FieldsExcelReport
         "Consideraciones|" => "considerations",
     ];
     const INE_2 = [
+        "MUNICIPIO" => "municipality",
         "NÚMERO_LÍNEA" => "number_line",
         "TIPO_CANDIDATURA" => "postulate",
         "NÚMERO_LISTA/PLANILLA" => "number_list",

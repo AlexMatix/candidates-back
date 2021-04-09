@@ -209,7 +209,7 @@ class CandidateController extends ApiController
         $candidate_ine = $candidate->copyCandidateIne;
         $candidate->fill($request);
         $candidate->save();
-
+ 
         if (!is_null($candidate_ine)) {
             $candidate_ine->fill($request);
             $candidate_ine->save();
