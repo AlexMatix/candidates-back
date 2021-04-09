@@ -4,14 +4,14 @@ namespace App\Http\Controllers\Candidate;
 
 use App\Candidate;
 use App\CandidateIne;
+use App\Http\Controllers\ApiController;
 use App\PoliticParty;
 use App\Postulate;
 use App\User;
 use App\Util\ExportExcel;
 use App\Util\FieldsExcelReport;
-use Illuminate\Http\Request;
-use App\Http\Controllers\ApiController;
 use App\Util\ImportExcel;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -210,7 +210,7 @@ class CandidateController extends ApiController
         $candidate_ine = $candidate->copyCandidateIne;
         $candidate->fill($request);
         $candidate->save();
- 
+
         if (!is_null($candidate_ine)) {
             $candidate_ine->fill($request);
             $candidate_ine->save();
@@ -540,24 +540,47 @@ class CandidateController extends ApiController
         $candidates_aux->all();
         $candidates = collect();
 
-        if(isset($candidates_aux[Candidate::PRESIDENCIA])){
+        if (isset($candidates_aux[Candidate::PRESIDENCIA])) {
             $candidates = $candidates->toBase()->merge($candidates_aux[Candidate::PRESIDENCIA]);
         }
-        if(isset($candidates_aux[Candidate::REGIDURIA])){
+        if (isset($candidates_aux[Candidate::REGIDURIA])) {
             $candidates = $candidates->toBase()->merge($candidates_aux[Candidate::REGIDURIA]);
         }
-        if(isset($candidates_aux[Candidate::SINDICATURA])){
+        if (isset($candidates_aux[Candidate::SINDICATURA])) {
             $candidates = $candidates->toBase()->merge($candidates_aux[Candidate::SINDICATURA]);
         }
 
         $candidates_all = array();
 
         $i = 0;
-        foreach ($candidates as $candidate){
+        $ordinalNumber = [
+            'PRIMERA',
+            'SEGUNDA',
+            'TERCERA',
+            'CUARTA',
+            'QUINTA',
+            'SEXTA',
+            'SÉPTIMA',
+            'OCTAVA',
+            'NOVENA',
+            'DÉCIMA',
+            'UNDÉCIMO',
+            'DUOÉCIMO',
+            'DÉCIMA TERCERA',
+            'DÉCIMA CUARTA',
+            'DÉCIMA QUINTA',
+            'DÉCIMA SEXTA',
+            'DÉCIMA SÉPTIMA',
+            'DÉCIMA OCTAVA',
+            'DÉCIMA NOVENA',
+            'VIGÉSIMO',
+        ];
+
+        foreach ($candidates as $candidate) {
             $alternate = Candidate::where('candidate_id', $candidate->id)->skipFields('Pendiente', -1)->first();
             if (!is_null($alternate)) {
 
-                switch ($candidate->postulate){
+                switch ($candidate->postulate) {
                     case Candidate::PRESIDENCIA:
                         $charge = 'PRESIDENCIA';
                         break;
@@ -573,26 +596,46 @@ class CandidateController extends ApiController
                 }
 
                 $candidates_all[$i]['charge'] = $charge;
+                $candidates_all[$i]['ordinal'] = $ordinalNumber[$i];
+                $candidates_all[$i]['ordinalNumber'] = ($i + 1) . 'ª';
                 $candidates_all[$i]['owner'] = $candidate;
                 $candidates_all[$i]['alternate'] = $alternate;
-
                 $i++;
             }
         }
 
-        $postulate = Postulate::find($request->all()['postulate_id']);
 
-        $reportPath = "";
-        $output = "";
-        $parameters = "";
+        $postulate = Postulate::find($request->all()['postulate_id']);
+        $reportPath = Storage::path('JasperReportGenerator/JasperReport/report_1/requestCityHall.jasper');
+        $parameters = [
+            'subreportsPath' => Storage::path('JasperReportGenerator/JasperReport/report_1/'),
+        ];
+        $output = Storage::path('JasperReportGenerator/JasperReport/report_1/requestCityHall.pdf');
         $data = [
             'municipality' => $postulate->municipality,
             "charges" => $candidates_all
         ];
 
+        if (File::exists($output)) {
+            File::delete($output);
+        }
+
         $data = \GuzzleHttp\json_encode($data);
         $pathJar = Storage::path('JasperReportGenerator/') . 'JasperReportGenerator.jar';
-        $arguments = "$reportPath \"" . addslashes($data) . "\" --output=$output --parameters=\"$parameters\" --format=xls";
-        dd("java -jar $pathJar $arguments");
+        $parameters = $this->stringParameters($parameters);
+
+        $arguments = "$reportPath \"" . addslashes($data) . "\" --output=$output --parameters=\"$parameters\" ";
+        $exec = exec("java -jar $pathJar $arguments", $execO, $execR);
+
+        return $this->downloadFile($output);
+    }
+
+    private function stringParameters($parameters): string
+    {
+        $string = '';
+        foreach ($parameters as $key => $value) {
+            $string .= "$key=$value ";
+        }
+        return trim($string);
     }
 }
