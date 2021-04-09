@@ -572,6 +572,10 @@ class CandidateController extends ApiController
             "charges" => $candidates_all
         ];
 
+        if (File::exists($output)) {
+            File::delete($output);
+        }
+
         $data = \GuzzleHttp\json_encode($data);
         $pathJar = Storage::path('JasperReportGenerator/') . 'JasperReportGenerator.jar';
         $parameters = $this->stringParameters($parameters);
