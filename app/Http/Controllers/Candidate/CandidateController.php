@@ -553,7 +553,7 @@ class CandidateController extends ApiController
 
                 $candidates_all[$i]['charge'] = $charge;
                 $candidates_all[$i]['ordinal'] = $ordinalNumber[$i];
-                $candidates_all[$i]['ordinalNumber'] = ($i + 1).'ª';
+                $candidates_all[$i]['ordinalNumber'] = ($i + 1) . 'ª';
                 $candidates_all[$i]['owner'] = $candidate;
                 $candidates_all[$i]['alternate'] = $alternate;
                 $i++;
@@ -561,10 +561,11 @@ class CandidateController extends ApiController
         }
 
         $postulate = Postulate::find($request->all()['postulate_id']);
-
-        $reportPath = "";
-        $output = "";
-        $parameters = "";
+        $reportPath = Storage::path('JasperReportGenerator/JasperReport/report_1/requestCityHall.jasper');
+        $parameters = [
+            'subreportsPath' => Storage::path('JasperReportGenerator/JasperReport/report_1/'),
+        ];
+        $output = Storage::path('JasperReportGenerator/JasperReport/report_1/requestCityHall.xls');
         $data = [
             'municipality' => $postulate->municipality,
             "charges" => $candidates_all
@@ -572,7 +573,22 @@ class CandidateController extends ApiController
 
         $data = \GuzzleHttp\json_encode($data);
         $pathJar = Storage::path('JasperReportGenerator/') . 'JasperReportGenerator.jar';
+        $parameters = $this->stringParameters($parameters);
+
         $arguments = "$reportPath \"" . addslashes($data) . "\" --output=$output --parameters=\"$parameters\" --format=xls";
-        dd("java -jar $pathJar $arguments");
+        $exec = exec("java -jar $pathJar $arguments", $execO, $execR);
+
+        dd("java -jar $pathJar $arguments", $execO, $execR, $exec);
+
+        return $this->downloadFile($output);
+    }
+
+    private function stringParameters($parameters): string
+    {
+        $string = '';
+        foreach ($parameters as $key => $value) {
+            $string .= "$key=$value ";
+        }
+        return trim($string);
     }
 }
