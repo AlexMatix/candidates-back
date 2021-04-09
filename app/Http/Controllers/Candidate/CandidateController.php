@@ -209,7 +209,7 @@ class CandidateController extends ApiController
         $candidate_ine = $candidate->copyCandidateIne;
         $candidate->fill($request);
         $candidate->save();
- 
+
         if (!is_null($candidate_ine)) {
             $candidate_ine->fill($request);
             $candidate_ine->save();
@@ -556,7 +556,6 @@ class CandidateController extends ApiController
                 $candidates_all[$i]['ordinalNumber'] = ($i + 1).'ª';
                 $candidates_all[$i]['owner'] = $candidate;
                 $candidates_all[$i]['alternate'] = $alternate;
-
                 $i++;
             }
         }
