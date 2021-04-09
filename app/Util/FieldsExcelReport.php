@@ -306,4 +306,34 @@ class FieldsExcelReport
         "CONSIDERACIONES" => "considerations",
         "ID DEL USUARIO" => "user_id"
     ];
+
+    const ROADS_IDS = [
+        ['id' => -1, 'name' => 'Por definir'],
+        ['id' => 1, 'name' => 'Ampliación'],
+        ['id' => 2, 'name' => 'Andador'],
+        ['id' => 3, 'name' => 'Avenida'],
+        ['id' => 4, 'name' => 'Boulevard'],
+        ['id' => 5, 'name' => 'Calle'],
+        ['id' => 6, 'name' => 'Callejon'],
+        ['id' => 7, 'name' => 'Calzada'],
+        ['id' => 8, 'name' => 'Cerrada'],
+        ['id' => 9, 'name' => 'Circuito'],
+        ['id' => 10, 'name' => 'Circulación'],
+        ['id' => 11, 'name' => 'Continuación'],
+        ['id' => 12, 'name' => 'Corredor'],
+        ['id' => 13, 'name' => 'Diagonal'],
+        ['id' => 14, 'name' => 'Eje vial'],
+        ['id' => 15, 'name' => 'Pasaje'],
+        ['id' => 16, 'name' => 'Peatonal'],
+        ['id' => 17, 'name' => 'Periférico'],
+        ['id' => 18, 'name' => 'Privada'],
+        ['id' => 19, 'name' => 'Prolongación'],
+        ['id' => 20, 'name' => 'Retorno'],
+        ['id' => 21, 'name' => 'Viaducto'],
+        ['id' => 22, 'name' => 'Localidad'],
+        ['id' => 23, 'name' => 'Carretera'],
+        ['id' => 24, 'name' => 'Plaza'],
+        ['id' => 25, 'name' => 'Camino'],
+        ['id' => 26, 'name' => 'Sección']
+    ];
 }

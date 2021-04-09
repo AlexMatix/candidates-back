@@ -334,6 +334,9 @@ class CandidateController extends ApiController
                 } elseif ($key == 'FECHA_NACIMIENTO') {
                     $date = date("d-m-Y", strtotime($candidate[$value]));
                     $data_excel[$i][$key] = $date;
+                } elseif ($key == 'VIALIDAD') {
+                    $road_name = array_search($candidate[$value], array_column(FieldsExcelReport::ROADS_IDS, 'id'));
+                    $data_excel[$i][$key] = FieldsExcelReport::ROADS_IDS[$road_name]['name'];
                 } else {
                     $data_excel[$i][$key] = $candidate[$value];
                 }
@@ -428,6 +431,9 @@ class CandidateController extends ApiController
                 } elseif ($key == 'FECHA_NACIMIENTO') {
                     $date = date("d-m-Y", strtotime($candidate[$value]));
                     $data_excel[$i][$key] = $date;
+                } elseif ($key == 'VIALIDAD') {
+                    $road_name = array_search($candidate[$value], array_column(FieldsExcelReport::ROADS_IDS, 'id'));
+                    $data_excel[$i][$key] = FieldsExcelReport::ROADS_IDS[$road_name]['name'];
                 } else {
                     $data_excel[$i][$key] = $candidate[$value];
                 }
@@ -474,9 +480,9 @@ class CandidateController extends ApiController
                     $candidate[$value] = 0;
                 } elseif ($value == 'number_list') {
                     $candidate[$value] = 1;
-                }elseif ($value == 'circumscription') {
+                } elseif ($value == 'circumscription') {
                     $candidate[$value] = 1;
-                }elseif ($value == 'locality') {
+                } elseif ($value == 'locality') {
                     $candidate[$value] = 1;
                 } else {
 
