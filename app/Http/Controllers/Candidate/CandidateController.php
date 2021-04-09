@@ -172,11 +172,12 @@ class CandidateController extends ApiController
         $candidate->fill($request->all());
         $alternate->fill($request->all()['alternate']);
 
-        if (!is_null($alternate_ine)) {
-            $alternate_ine->fill($request->all()['alternate']);
-        }
         if (!is_null($candidate_ine)) {
             $candidate_ine->fill($request->all());
+        }
+
+        if (!is_null($alternate_ine)) {
+            $alternate_ine->fill($request->all()['alternate']);
         }
 
         if (!$candidate->isClean()) {
@@ -186,6 +187,7 @@ class CandidateController extends ApiController
                 $candidate_ine->save();
             }
         }
+
         if (!$alternate->isClean()) {
             $alternate->user_id = $user->id;
             $alternate->save();
@@ -198,14 +200,20 @@ class CandidateController extends ApiController
         return $this->showOne($candidate);
     }
 
-    private function updateCandidates($request, Candidate $candidate)
+    private function updateCandidates($request, $candidate)
     {
         $rules = [
             'date_birth' => 'date',
         ];
 
+        $candidate_ine = $candidate->copyCandidateIne;
         $candidate->fill($request);
         $candidate->save();
+
+        if (!is_null($candidate_ine)) {
+            $candidate_ine->fill($request);
+            $candidate_ine->save();
+        }
     }
 
     public function destroy(Candidate $candidate)
