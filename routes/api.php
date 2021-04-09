@@ -59,5 +59,5 @@ Route::get('getMunicipalities', 'Postulate\PostulateController@getMunicipalities
 
 //REPORTS ROTE
 Route::post('reportDiputadosByDistrictIne', 'CantidateIne\CandidateIneController@reportDiputadosByDistrictIne');
-Route::post('ayuntamientoMunicipalityPoliticParty', 'CantidateIne\ayuntamientoMunicipalityPoliticParty@reportDiputadosByDistrictIne');
+Route::post('ayuntamientoMunicipalityPoliticParty', 'CantidateIne\CandidateIneController@ayuntamientoMunicipalityPoliticParty');
 //END REPORTS ROTE
