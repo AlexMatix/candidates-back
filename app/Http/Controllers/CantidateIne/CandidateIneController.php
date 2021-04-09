@@ -550,4 +550,149 @@ class CandidateIneController extends ApiController
         return $this->downloadFile($path . 'basic.xlsx');
 
     }
+
+    public function ayuntamientoMunicipalityPoliticParty(Request $request)
+    {
+        $rules = [
+            'district' => 'required'
+        ];
+
+        $this->validate($request, $rules);
+
+        $data_excel = [];
+        $array_key_alternate = [];
+        $candidates = [];
+
+        $data = FieldsExcelReport::INE;
+        $data_alternate = FieldsExcelReport::INE_ALTERNATE;
+
+        if ($request->has('politic_party_id')) {
+            $data = FieldsExcelReport::INE;
+            $data_alternate = FieldsExcelReport::INE_ALTERNATE;
+            $candidatesResult = CandidateIne::join('candidates', 'candidate_ines.origin_candidate_id', '=', 'candidates.id')
+                ->select('candidate_ines.*', 'candidates.user_id')
+                ->where('candidate_ines.type_postulate', CandidateIne::OWNER)
+                ->where('candidate_ines.politic_party_id', $request->all()['politic_party_id'])
+                ->where(function ($q) {
+                    $q->orWhere('candidate_ines.postulate', CandidateIne::PRESIDENCIA)
+                        ->orWhere('candidate_ines.postulate', CandidateIne::SINDICATURA)
+                        ->orWhere('candidate_ines.postulate', CandidateIne::REGIDURIA);
+                })
+                ->orderBy('candidate_ines.postulate')
+                ->orderBy('candidate_ines.number_line')
+                ->with("postulate_data")
+                ->get();
+        } else {
+
+            $data = FieldsExcelReport::INE;
+            $data_alternate = FieldsExcelReport::INE_ALTERNATE;
+            $candidatesResult = CandidateIne::join('candidates', 'candidate_ines.origin_candidate_id', '=', 'candidates.id')
+                ->select('candidate_ines.*', 'candidates.user_id')
+                ->where('candidate_ines.type_postulate', CandidateIne::OWNER)
+                ->where(function ($q) {
+                    $q->orWhere('candidate_ines.postulate', CandidateIne::PRESIDENCIA)
+                        ->orWhere('candidate_ines.postulate', CandidateIne::SINDICATURA)
+                        ->orWhere('candidate_ines.postulate', CandidateIne::REGIDURIA);
+                })
+                ->orderBy('candidate_ines.postulate')
+                ->orderBy('candidate_ines.number_line')
+                ->with("postulate_data")
+                ->get();
+        }
+        $districts = $request->get('district');
+        foreach ($districts as $district) {
+            foreach ($candidatesResult as $candidate) {
+                if($district['id']  === $candidate->postulate_data->id ){
+                    $candidates[] = $candidate;
+                }
+            }
+        }
+
+        $i = 0;
+        foreach ($candidates as $candidate) {
+            //OWNER DATA
+            foreach ($data as $key => $value) {
+                if ($key == 'Distrito') {
+                    $postulate = Postulate::find($candidate[$value]);
+                    $data_excel[$i][$key] = $postulate->district;
+                } elseif ($key == 'Municipio') {
+                    $postulate = Postulate::find($candidate->postulate_id);
+                    $data_excel[$i][$key] = $postulate->municipality;
+                } elseif ($key == 'Tipo de residencia en meses|' || $key == 'RESIDENCIA_MESES_SUPLENCIA') {
+                    $data_excel[$i][$key] = "";
+                } elseif ($key == 'Fecha de nacimiento|') {
+                    $date = date("d-m-Y", strtotime($candidate[$value]));
+                    $data_excel[$i][$key] = $date;
+                } elseif ($key == 'Correo electrónico|') {
+                    $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
+                } elseif ($key == 'Confirmación de correo electrónico|') {
+                    $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
+                } elseif ($key == 'CONFIRMACIÓN_CORREO_SUPLENCIA|') {
+                    $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
+                } elseif ($key == 'FECHA_NACIMIENTO_SUPLENCIA|') {
+                    $date = date("d-m-Y", strtotime($candidate[$value]));
+                    $data_excel[$i][$key] = $date;
+                } elseif ($key == 'Sexo' || $key == 'SEXO') {
+                    $data_excel[$i][$key] = $candidate[$value] === 'HOMBRE' ? 'H' : 'M';
+                } elseif ($key == 'Sexo|' || $key == 'SEXO_SUPLENCIA|') {
+                    $data_excel[$i][$key] = $candidate[$value] === 'HOMBRE' ? 'H' : 'M';
+                } elseif ($key == 'Tipo candidatura' || $key == 'TIPO_CANDIDATURA') {
+                    $reportCandidate = [
+                        "1" => 8,
+                        "2" => 7,
+                        "3" => 28,
+                        "4" => 26,
+                        "5" => 9,
+                    ];
+                    $data_excel[$i][$key] = $reportCandidate[$candidate[$value]];
+                } else {
+                    $data_excel[$i][$key] = $candidate[$value];
+                }
+            }
+
+            //ALTERNATE DATA
+            if (!is_null($candidate->alternate)) {
+                foreach ($data_alternate as $key => $value) {
+                    if ($key == 'Registra suplencia|') {
+                        $data_excel[$i][$key] = 1;
+                    } elseif ($key == 'Tipo de residencia en meses|' || $key == 'RESIDENCIA_MESES_SUPLENCIA') {
+                        $data_excel[$i][$key] = "";
+                    } elseif ($key == 'Fecha de nacimiento|') {
+                        $date = date("d-m-Y", strtotime($candidate->alternate[$value]));
+                        $data_excel[$i][$key] = $date;
+                    } elseif ($key == 'Correo electrónico|') {
+                        $data_excel[$i][$key] = mb_strtolower($candidate->alternate[$value]);
+                    } elseif ($key == 'Confirmación de correo electrónico|') {
+                        $data_excel[$i][$key] = mb_strtolower($candidate->alternate[$value]);
+                    } elseif ($key == 'CONFIRMACIÓN_CORREO_SUPLENCIA|') {
+                        $data_excel[$i][$key] = mb_strtolower($candidate->alternate[$value]);
+                    } elseif ($key == 'FECHA_NACIMIENTO_SUPLENCIA|') {
+                        $date = date("d-m-Y", strtotime($candidate->alternate[$value]));
+                        $data_excel[$i][$key] = $date;
+                    } elseif ($key == 'Sexo|' || $key == 'SEXO_SUPLENCIA|') {
+                        $data_excel[$i][$key] = $candidate->alternate[$value] === 'HOMBRE' ? 'H' : 'M';
+                    } else {
+                        $data_excel[$i][$key] = $candidate->alternate[$value];
+                    }
+                }
+            }
+            $i++;
+        }
+
+        foreach (array_keys($data_alternate) as $item) {
+            $array_key_alternate[] = str_replace('|', '', $item);
+        }
+
+        $path = Storage::path('reports/');
+
+        if (!File::exists($path)) {
+            File::makeDirectory($path, 0777, true, true);
+        }
+
+        $report = new ExportExcel($path . 'basic.xlsx');
+        $report->createExcel($data_excel, array_merge(array_keys($data), $array_key_alternate));
+
+        return $this->downloadFile($path . 'basic.xlsx');
+
+    }
 }
