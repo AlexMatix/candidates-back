@@ -566,7 +566,7 @@ class CandidateController extends ApiController
         $parameters = [
             'subreportsPath' => Storage::path('JasperReportGenerator/JasperReport/report_1/'),
         ];
-        $output = Storage::path('JasperReportGenerator/JasperReport/report_1/requestCityHall.xls');
+        $output = Storage::path('JasperReportGenerator/JasperReport/report_1/requestCityHall.pdf');
         $data = [
             'municipality' => $postulate->municipality,
             "charges" => $candidates_all
