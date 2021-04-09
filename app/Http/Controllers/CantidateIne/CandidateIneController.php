@@ -432,7 +432,7 @@ class CandidateIneController extends ApiController
                 ->where('candidate_ines.politic_party_id', $request->all()['politic_party_id'])
                 ->where(function ($q) {
                     $q->orWhere('candidate_ines.postulate', CandidateIne::DIPUTACION_MR)
-                        ->orWhere('candidate_ines.postulate', CandidateIne::DIPUTACION_MRphp);
+                        ->orWhere('candidate_ines.postulate', CandidateIne::DIPUTACION_MR);
                 })
                 ->orderBy('candidate_ines.postulate')
                 ->orderBy('candidate_ines.number_line')
