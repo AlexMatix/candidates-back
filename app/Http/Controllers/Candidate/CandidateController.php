@@ -560,12 +560,13 @@ class CandidateController extends ApiController
             }
         }
 
+
         $postulate = Postulate::find($request->all()['postulate_id']);
         $reportPath = Storage::path('JasperReportGenerator/JasperReport/report_1/requestCityHall.jasper');
         $parameters = [
             'subreportsPath' => Storage::path('JasperReportGenerator/JasperReport/report_1/'),
         ];
-        $output = Storage::path('JasperReportGenerator/JasperReport/report_1/requestCityHall.xls');
+        $output = Storage::path('JasperReportGenerator/JasperReport/report_1/requestCityHall.pdf');
         $data = [
             'municipality' => $postulate->municipality,
             "charges" => $candidates_all
@@ -575,10 +576,8 @@ class CandidateController extends ApiController
         $pathJar = Storage::path('JasperReportGenerator/') . 'JasperReportGenerator.jar';
         $parameters = $this->stringParameters($parameters);
 
-        $arguments = "$reportPath \"" . addslashes($data) . "\" --output=$output --parameters=\"$parameters\" --format=xls";
+        $arguments = "$reportPath \"" . addslashes($data) . "\" --output=$output --parameters=\"$parameters\" ";
         $exec = exec("java -jar $pathJar $arguments", $execO, $execR);
-
-        dd("java -jar $pathJar $arguments", $execO, $execR, $exec);
 
         return $this->downloadFile($output);
     }
