@@ -106,6 +106,7 @@ class FieldsExcelReport
         "Distrito" => "postulate_id",
         "Municipio" => "municipality",
         "Localidad" => "locality",
+        "Partido" => "politic_party",
         "Demarcación" => "demarcation",
         "Juntas Municipales" => "municipalities_council",
         "Lema de campaña" => "campaign_slogan",
@@ -182,6 +183,7 @@ class FieldsExcelReport
     ];
     const INE_2 = [
         "MUNICIPIO" => "municipality",
+        "PARTIDO" => "politic_party",
         "NÚMERO_LÍNEA" => "number_line",
         "TIPO_CANDIDATURA" => "postulate",
         "NÚMERO_LISTA/PLANILLA" => "number_list",
