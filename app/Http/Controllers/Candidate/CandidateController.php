@@ -23,9 +23,9 @@ class CandidateController extends ApiController
         $user = Auth::user();
 
         if ($user->type === User::ADMIN) {
-            $candidates = Candidate::with('postulate_data');
+            $candidates = Candidate::with('postulate_data', 'copyCandidateIne');
         } else {
-            $candidates = Candidate::where('user_id', $user->id)->with('postulate_data');
+            $candidates = Candidate::where('user_id', $user->id)->with('postulate_data', 'copyCandidateIne');
         }
 
         if ($request->has('value')) {
