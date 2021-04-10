@@ -581,7 +581,8 @@ class CandidateIneController extends ApiController
                 ->orderBy('candidate_ines.postulate')
                 ->orderBy('candidate_ines.number_line')
                 ->with("postulate_data")
-                ->get();
+                ->toSql();
+            dd($candidatesResult);
         } else {
 
             $data = FieldsExcelReport::INE;

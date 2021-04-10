@@ -10,7 +10,7 @@ class CandidateIne extends Model
     const ALTERNATE = 2;
 
     const DIPUTACION_RP = 1; //8
-    const DIPUTACION_MR = 2; //7
+    const DIPUTACION_MR = 2; //47
     const REGIDURIA = 3; // 28
     const SINDICATURA = 4; // 26
     const PRESIDENCIA = 5; // 9
