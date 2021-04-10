@@ -4,6 +4,7 @@ namespace App\Http\Controllers\CantidateIne;
 
 use App\Candidate;
 use App\CandidateIne;
+use App\PoliticParty;
 use App\Http\Controllers\ApiController;
 use App\Postulate;
 use App\Util\ExportExcel;
@@ -223,6 +224,9 @@ class CandidateIneController extends ApiController
                     $data_excel[$i][$key] = $date;
                 } elseif ($key == 'Sexo' || $key == 'SEXO') {
                     $data_excel[$i][$key] = $candidate[$value] === 'HOMBRE' ? 'H' : 'M';
+                } elseif ($key == 'PARTIDO' || $key == 'Partido') {
+                    $politic_party = PoliticParty::find($candidate->politic_party_id);
+                    $data_excel[$i][$key] = $politic_party->name;
                 } else {
                     $data_excel[$i][$key] = $candidate[$value];
                 }
@@ -457,7 +461,7 @@ class CandidateIneController extends ApiController
         $districts = $request->get('district');
         foreach ($districts as $district) {
             foreach ($candidatesResult as $candidate) {
-                if($district['id']  === $candidate->postulate_data->district ){
+                if ($district['id'] === $candidate->postulate_data->district) {
                     $candidates[] = $candidate;
                 }
             }
@@ -602,7 +606,7 @@ class CandidateIneController extends ApiController
         $districts = $request->get('district');
         foreach ($districts as $district) {
             foreach ($candidatesResult as $candidate) {
-                if($district['id']  === $candidate->postulate_data->id ){
+                if ($district['id'] === $candidate->postulate_data->id) {
                     $candidates[] = $candidate;
                 }
             }
@@ -696,7 +700,8 @@ class CandidateIneController extends ApiController
 
     }
 
-    public function createSpecialReportINE(Request $request){
+    public function createSpecialReportINE(Request $request)
+    {
         $rules = [
             'type' => 'required'
         ];
