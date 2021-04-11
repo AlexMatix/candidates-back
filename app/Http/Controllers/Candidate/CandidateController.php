@@ -644,4 +644,40 @@ class CandidateController extends ApiController
         }
         return trim($string);
     }
+
+    public function changePoliticParty(Request $request)
+    {
+        $rules = [
+            'old_user' => 'required',
+            'new_user' => 'required',
+            'type' => 'required'
+        ];
+
+        $this->validate($request, $rules);
+
+        $candidates = Candidate::getByUser($request->all()['old_user'])
+            ->getByType($request->all()['type']);
+
+        if ($request->has('postulate_id')) {
+            $candidates = $candidates->getByMunicipality($request->all()['postulate_id']);
+        }
+
+        $candidates = $candidates->get();
+        $new_user = User::find($request->all()['new_user']);
+
+//        return $this->showList($candidates);
+        foreach ($candidates as $candidate) {
+            $candidate->user_id = $new_user->id;
+            $candidate->politic_party_id = $new_user->politic_party->id;
+            $candidate->save();
+
+            $candidateIne = $candidate->copyCandidateIne;
+            if (!is_null($candidateIne)) {
+                $candidateIne->politic_party_id = $new_user->politic_party->id;
+                $candidateIne->save();
+            }
+        }
+
+        return $this->showList($candidates);
+    }
 }

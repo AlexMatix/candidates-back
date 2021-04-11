@@ -57,7 +57,7 @@ class User extends Authenticatable
 
     public function politic_party()
     {
-        return $this->hasOne(PoliticParty::class);
+        return $this->belongsTo(PoliticParty::class);
     }
 
     public function candidate(){

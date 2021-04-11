@@ -135,7 +135,8 @@ class CandidateIneController extends ApiController
                     ->where('candidate_ines.type_postulate', CandidateIne::OWNER)
                     ->where(function ($q) {
                         $q->orWhere('candidate_ines.postulate', CandidateIne::SINDICATURA)
-                            ->orWhere('candidate_ines.postulate', CandidateIne::REGIDURIA);
+                            ->orWhere('candidate_ines.postulate', CandidateIne::REGIDURIA)
+                            ->orWhere('candidate_ines.postulate', CandidateIne::PRESIDENCIA);
                     })
                     ->where('candidate_ines.politic_party_id', $request->all()['politic_party_id'])
                     ->skipFields('Pendiente', -1)

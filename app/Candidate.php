@@ -128,4 +128,16 @@ class Candidate extends Model
 
         return $query;
     }
+
+    public function scopeGetByUser($query, $user_id){
+        return $query->where('user_id', $user_id);
+    }
+
+    public function scopeGetByType($query, $types){
+        return $query->where('postulate', $types);
+    }
+
+    public function scopeGetByMunicipality($query, $postulate_id){
+        return $query->where('postulate_id', $postulate_id);
+    }
 }
