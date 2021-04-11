@@ -110,7 +110,6 @@ class CandidateIneController extends ApiController
         $data_excel = [];
         $array_key_alternate = [];
 
-
         if ($request->has('politic_party_id')) {
             if ($request->all()['type'] == 1) {
                 $data = FieldsExcelReport::INE;
@@ -206,8 +205,10 @@ class CandidateIneController extends ApiController
                     $data_excel[$i][$key] = $postulate->municipality;
                 } elseif ($key == 'Correo electrónico' || $key == 'CORREO_ELECTRÓNICO') {
                     $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
+//                    $data_excel[$i][$key] = "morenasnr@gmail.com";
                 } elseif ($key == 'Confirmación correo electronico' || $key == 'CONFIRMACIÓN_CORREO') {
                     $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
+//                    $data_excel[$i][$key] = "morenasnr@gmail.com";
                 } elseif ($key == 'Tipo de residencia en meses' || $key == 'TIEMPO_RESIDENCIA_MESES') {
                     $data_excel[$i][$key] = "";
                 } elseif ($key == 'Tipo candidatura' || $key == 'TIPO_CANDIDATURA') {
@@ -244,8 +245,10 @@ class CandidateIneController extends ApiController
                         $data_excel[$i][$key] = $date;
                     } elseif ($key == 'Correo electrónico|') {
                         $data_excel[$i][$key] = mb_strtolower($candidate->alternate[$value]);
+                        $data_excel[$i][$key] = "morenasnr@gmail.com";
                     } elseif ($key == 'Confirmación de correo electrónico|') {
                         $data_excel[$i][$key] = mb_strtolower($candidate->alternate[$value]);
+//                        $data_excel[$i][$key] = "morenasnr@gmail.com";
                     } elseif ($key == 'CONFIRMACIÓN_CORREO_SUPLENCIA|') {
                         $data_excel[$i][$key] = mb_strtolower($candidate->alternate[$value]);
                     } elseif ($key == 'FECHA_NACIMIENTO_SUPLENCIA|' || $key == "Fecha de nacimiento|") {
@@ -253,6 +256,8 @@ class CandidateIneController extends ApiController
                         $data_excel[$i][$key] = $date;
                     } elseif ($key == 'Sexo|' || $key == 'SEXO_SUPLENCIA|') {
                         $data_excel[$i][$key] = $candidate->alternate[$value] === 'HOMBRE' ? 'H' : 'M';
+                    } elseif ($key == 'Correo electrónico|' || $key == 'Confirmación de correo electrónico|' || $key == 'CORREO_ELECTRÓNICO_SUPLENCIA|' || $key == 'CONFIRMACIÓN_CORREO_SUPLENCIA|') {
+//                        $data_excel[$i][$key] = "morenasnr@gmail.com";;
                     } else {
                         $data_excel[$i][$key] = $candidate->alternate[$value];
                     }
@@ -579,16 +584,15 @@ class CandidateIneController extends ApiController
                 ->where('candidate_ines.politic_party_id', $request->all()['politic_party_id'])
                 ->where(function ($q) {
                     $q->orWhere('candidate_ines.postulate', CandidateIne::PRESIDENCIA)
-                        ->orWhere('candidate_ines.postulate', CandidateIne::SINDICATURA)
-                        ->orWhere('candidate_ines.postulate', CandidateIne::REGIDURIA);
+                        ->orWhere('candidate_ines.postulate', CandidateIne::REGIDURIA)
+                        ->orWhere('candidate_ines.postulate', CandidateIne::SINDICATURA);
                 })
                 ->orderBy('candidate_ines.postulate')
                 ->orderBy('candidate_ines.number_line')
                 ->with("postulate_data")
-                ->toSql();
-            dd($candidatesResult);
-        } else {
+                ->get();
 
+        } else {
             $data = FieldsExcelReport::INE;
             $data_alternate = FieldsExcelReport::INE_ALTERNATE;
             $candidatesResult = CandidateIne::join('candidates', 'candidate_ines.origin_candidate_id', '=', 'candidates.id')
@@ -604,6 +608,7 @@ class CandidateIneController extends ApiController
                 ->with("postulate_data")
                 ->get();
         }
+
         $districts = $request->get('district');
         foreach ($districts as $district) {
             foreach ($candidatesResult as $candidate) {
@@ -630,10 +635,13 @@ class CandidateIneController extends ApiController
                     $data_excel[$i][$key] = $date;
                 } elseif ($key == 'Correo electrónico|') {
                     $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
+                    $data_excel[$i][$key] = "morenasnr@gmail.com";
                 } elseif ($key == 'Confirmación de correo electrónico|') {
                     $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
+                    $data_excel[$i][$key] = "morenasnr@gmail.com";
                 } elseif ($key == 'CONFIRMACIÓN_CORREO_SUPLENCIA|') {
                     $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
+                    $data_excel[$i][$key] = "morenasnr@gmail.com";
                 } elseif ($key == 'FECHA_NACIMIENTO_SUPLENCIA|') {
                     $date = date("d-m-Y", strtotime($candidate[$value]));
                     $data_excel[$i][$key] = $date;
@@ -667,10 +675,13 @@ class CandidateIneController extends ApiController
                         $data_excel[$i][$key] = $date;
                     } elseif ($key == 'Correo electrónico|') {
                         $data_excel[$i][$key] = mb_strtolower($candidate->alternate[$value]);
+                        $data_excel[$i][$key] = "morenasnr@gmail.com";
                     } elseif ($key == 'Confirmación de correo electrónico|') {
                         $data_excel[$i][$key] = mb_strtolower($candidate->alternate[$value]);
+                        $data_excel[$i][$key] = "morenasnr@gmail.com";
                     } elseif ($key == 'CONFIRMACIÓN_CORREO_SUPLENCIA|') {
                         $data_excel[$i][$key] = mb_strtolower($candidate->alternate[$value]);
+                        $data_excel[$i][$key] = "morenasnr@gmail.com";
                     } elseif ($key == 'FECHA_NACIMIENTO_SUPLENCIA|') {
                         $date = date("d-m-Y", strtotime($candidate->alternate[$value]));
                         $data_excel[$i][$key] = $date;
