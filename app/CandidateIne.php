@@ -15,6 +15,12 @@ class CandidateIne extends Model
     const SINDICATURA = 4; // 26
     const PRESIDENCIA = 5; // 9
 
+    const REPORT_TYPE_1 = 1; //DIPUTACION_MR, DIPUTACION_RP, PRESIDENCIA
+    const REPORT_TYPE_2 = 2; //SINDICATURA, REGIDURIA
+    const REPORT_TYPE_3 = 3; //DIPUTACION_MR, DIPUTACION_RP
+    const REPORT_TYPE_4 = 4; //PRESIDENCIA, SINDICATURA, REGIDURIA
+    const REPORT_TYPE_5 = 5; //PRESIDENCIA, REGIDURIA
+
     protected $fillable = [
         'father_lastname',
         'mother_lastname',
@@ -120,7 +126,7 @@ class CandidateIne extends Model
 
     public function scopeGetOwner($query)
     {
-        return $query->where('type_postulate', Self::OWNER)->orderBy('politic_party_id')->orderBy('created_at');
+        return $query->where('candidate_ines.type_postulate', Self::OWNER);
     }
 
     public function postulate_data()
@@ -140,6 +146,7 @@ class CandidateIne extends Model
             'type_postulate',
             'ine_check',
             'user_id',
+            'gender',
             'postulate_id',
             'politic_party_id',
             'candidate_id',
@@ -188,4 +195,10 @@ class CandidateIne extends Model
         }
         return $query;
     }
+
+    public function scopeJoinCandidates($query)
+    {
+        return $query->join('candidates', 'candidate_ines.origin_candidate_id', '=', 'candidates.id')->select('candidate_ines.*', 'candidates.user_id');
+    }
+
 }

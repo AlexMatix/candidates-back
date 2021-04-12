@@ -106,7 +106,6 @@ class FieldsExcelReport
         "Distrito" => "postulate_id",
         "Municipio" => "municipality",
         "Localidad" => "locality",
-        "Partido" => "politic_party",
         "Demarcación" => "demarcation",
         "Juntas Municipales" => "municipalities_council",
         "Lema de campaña" => "campaign_slogan",

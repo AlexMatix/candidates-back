@@ -135,8 +135,7 @@ class CandidateIneController extends ApiController
                     ->where('candidate_ines.type_postulate', CandidateIne::OWNER)
                     ->where(function ($q) {
                         $q->orWhere('candidate_ines.postulate', CandidateIne::SINDICATURA)
-                            ->orWhere('candidate_ines.postulate', CandidateIne::REGIDURIA)
-                            ->orWhere('candidate_ines.postulate', CandidateIne::PRESIDENCIA);
+                            ->orWhere('candidate_ines.postulate', CandidateIne::REGIDURIA);
                     })
                     ->where('candidate_ines.politic_party_id', $request->all()['politic_party_id'])
                     ->skipFields('Pendiente', -1)
@@ -886,5 +885,57 @@ class CandidateIneController extends ApiController
         $report->createExcel($data_excel, array_merge(array_keys($data), $array_key_alternate));
 
         return $this->downloadFile($path . 'basic.xlsx');
+    }
+
+    public function getReportFinal(Request $request)
+    {
+        $rules = [
+            'type' => 'required'
+        ];
+
+        $this->validate($request, $rules);
+
+        $candidates = CandidateIne::joinCandidates()->getOwner()->skipFields('Pendiente', -1);
+
+        if ($request->has('politic_party_id')) {
+            $candidates = $candidates->where('candidate_ines.politic_party_id', $request->all()['politic_party_id']);
+        }
+
+        switch ($request->all()['type']) {
+            case CandidateIne::REPORT_TYPE_1:
+                $candidates = $candidates->where(function ($q) {
+                    $q->orWhere('candidate_ines.postulate', CandidateIne::DIPUTACION_MR)
+                        ->orWhere('candidate_ines.postulate', CandidateIne::DIPUTACION_RP)
+                        ->orWhere('candidate_ines.postulate', CandidateIne::PRESIDENCIA);
+                });
+                break;
+            case CandidateIne::REPORT_TYPE_2:
+                $candidates = $candidates->where(function ($q) {
+                    $q->orWhere('candidate_ines.postulate', CandidateIne::SINDICATURA)
+                        ->orWhere('candidate_ines.postulate', CandidateIne::REGIDURIA);
+                });
+        }
+    }
+
+    public function replaceGender(){
+        $candidateInes = CandidateIne::whereNull('gender')->get();
+
+        foreach ($candidateInes as $candidateIne){
+            if(!is_null($candidateIne->curp)){
+                if($candidateIne->curp[10] == 'M'){
+                    $candidateIne->gender = 'MUJER';
+                }else{
+                    $candidateIne->gender = 'HOMBRE';
+                }
+
+                $candidateOrigin = $candidateIne->originCandidate;
+                $candidateIne->save();
+
+                if(!is_null($candidateOrigin)){
+                    $candidateOrigin->gender = $candidateIne->gender;
+                    $candidateOrigin->save();
+                }
+            }
+        }
     }
 }
