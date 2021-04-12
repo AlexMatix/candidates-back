@@ -54,6 +54,7 @@ Route::get('createReportIneByUser', 'CantidateIne\CandidateIneController@createR
 Route::get('createSpecialReport', 'CantidateIne\CandidateIneController@createSpecialReportINE');
 
 Route::put('replaceGender', 'CantidateIne\CandidateIneController@replaceGender');
+Route::get('getReportFinal', 'CantidateIne\CandidateIneController@getReportFinal');
 //END CANDIDATE INE ROUTE
 
 //POLITIC PARTY ROUTE

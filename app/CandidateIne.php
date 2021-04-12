@@ -20,6 +20,7 @@ class CandidateIne extends Model
     const REPORT_TYPE_3 = 3; //DIPUTACION_MR, DIPUTACION_RP
     const REPORT_TYPE_4 = 4; //PRESIDENCIA, SINDICATURA, REGIDURIA
     const REPORT_TYPE_5 = 5; //PRESIDENCIA, REGIDURIA
+    const REPORT_TYPE_6 = 6; //ALL
 
     protected $fillable = [
         'father_lastname',
