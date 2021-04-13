@@ -972,13 +972,22 @@ class CandidateIneController extends ApiController
                         ->orWhere('candidate_ines.postulate', CandidateIne::DIPUTACION_RP);
                 });
                 break;
-            case 7:
+            case CandidateIne::REPORT_TYPE_7:
                 $data = FieldsExcelReport::INE;
                 $data_alternate = FieldsExcelReport::INE_ALTERNATE;
 
                 $candidates = $candidates->where(function ($q) {
                     $q->orWhere('candidate_ines.postulate', CandidateIne::DIPUTACION_MR);
                 });
+                break;
+            case 8:
+                $data = FieldsExcelReport::INE;
+                $data_alternate = FieldsExcelReport::INE_ALTERNATE;
+
+                $candidates = $candidates->where(function ($q) {
+                    $q->orWhere('candidate_ines.postulate', CandidateIne::PRESIDENCIA);
+                });
+                break;
         }
 
         $candidates = $candidates->orderBy('candidate_ines.number_line')
@@ -1005,10 +1014,8 @@ class CandidateIneController extends ApiController
                     $data_excel[$i][$key] = $postulate->municipality;
                 } elseif ($key == 'Correo electrónico' || $key == 'CORREO_ELECTRÓNICO') {
                     $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
-//                    $data_excel[$i][$key] = "morenasnr@gmail.com";
                 } elseif ($key == 'Confirmación correo electronico' || $key == 'CONFIRMACIÓN_CORREO') {
                     $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
-//                    $data_excel[$i][$key] = "morenasnr@gmail.com";
                 } elseif ($key == 'Tipo de residencia en meses' || $key == 'TIEMPO_RESIDENCIA_MESES') {
                     $data_excel[$i][$key] = "";
                 } elseif ($key == 'Tipo candidatura' || $key == 'TIPO_CANDIDATURA') {
