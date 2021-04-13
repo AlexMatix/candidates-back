@@ -202,4 +202,19 @@ class CandidateIne extends Model
         return $query->join('candidates', 'candidate_ines.origin_candidate_id', '=', 'candidates.id')->select('candidate_ines.*', 'candidates.user_id');
     }
 
+    public function scopeFilterDistrict($query, $districts)
+    {
+        if (!is_array($districts)) {
+            return $query->where('postulate_id', $districts);
+        } else {
+            foreach ($districts as $district) {
+                $query->where(function ($q) use ($district) {
+                    $q->where('postulate_id', $districts);
+                });
+            }
+
+            return $query;
+        }
+    }
+
 }

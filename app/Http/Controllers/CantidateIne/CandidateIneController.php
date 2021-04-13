@@ -910,8 +910,15 @@ class CandidateIneController extends ApiController
             $candidates = $candidates->where('user_id', $request->all()['user_id']);
         }
 
+        if($request->has('districts')){
+            $candidates = $candidates->filterDistrict($request->all()['districts']);
+        }
+
         switch ($request->all()['type']) {
             case CandidateIne::REPORT_TYPE_1:
+                $data = FieldsExcelReport::INE;
+                $data_alternate = FieldsExcelReport::INE_ALTERNATE;
+
                 $candidates = $candidates->where(function ($q) {
                     $q->orWhere('candidate_ines.postulate', CandidateIne::DIPUTACION_MR)
                         ->orWhere('candidate_ines.postulate', CandidateIne::DIPUTACION_RP)
@@ -919,12 +926,18 @@ class CandidateIneController extends ApiController
                 });
                 break;
             case CandidateIne::REPORT_TYPE_2:
+                $data = FieldsExcelReport::INE_2;
+                $data_alternate = FieldsExcelReport::INE_2_ALTERNATE;
+
                 $candidates = $candidates->where(function ($q) {
                     $q->orWhere('candidate_ines.postulate', CandidateIne::SINDICATURA)
                         ->orWhere('candidate_ines.postulate', CandidateIne::REGIDURIA);
                 });
                 break;
             case CandidateIne::REPORT_TYPE_3:
+                $data = FieldsExcelReport::INE;
+                $data_alternate = FieldsExcelReport::INE_ALTERNATE;
+
                 $candidates = $candidates->where(function ($q) {
                     $q->orWhere('candidate_ines.postulate', CandidateIne::DIPUTACION_RP)
                         ->orWhere('candidate_ines.postulate', CandidateIne::DIPUTACION_MR);
@@ -939,6 +952,15 @@ class CandidateIneController extends ApiController
                         ->orWhere('candidate_ines.postulate', CandidateIne::PRESIDENCIA);
                 });
                 break;
+            case CandidateIne::REPORT_TYPE_5:
+                $data = FieldsExcelReport::INE_2;
+                $data_alternate = FieldsExcelReport::INE_2_ALTERNATE;
+
+                $candidates = $candidates->where(function ($q) {
+                    $q->orWhere('candidate_ines.postulate', CandidateIne::PRESIDENCIA)
+                        ->orWhere('candidate_ines.postulate', CandidateIne::REGIDURIA);
+                });
+                break;
             case CandidateIne::REPORT_TYPE_6:
                 $data = FieldsExcelReport::INE_2;
                 $data_alternate = FieldsExcelReport::INE_2_ALTERNATE;
@@ -950,8 +972,14 @@ class CandidateIneController extends ApiController
                         ->orWhere('candidate_ines.postulate', CandidateIne::DIPUTACION_RP);
                 });
                 break;
-        }
+            case 7:
+                $data = FieldsExcelReport::INE;
+                $data_alternate = FieldsExcelReport::INE_ALTERNATE;
 
+                $candidates = $candidates->where(function ($q) {
+                    $q->orWhere('candidate_ines.postulate', CandidateIne::DIPUTACION_MR);
+                });
+        }
 
         $candidates = $candidates->orderBy('candidate_ines.number_line')
             ->orderBy('candidate_ines.type_postulate')
