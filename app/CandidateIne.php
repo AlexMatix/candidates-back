@@ -209,7 +209,7 @@ class CandidateIne extends Model
         } else {
             foreach ($districts as $district) {
                 $query->where(function ($q) use ($district) {
-                    $q->where('postulate_id', $districts);
+                    $q->where('candidate_ines.postulate_id', $districts);
                 });
             }
 
