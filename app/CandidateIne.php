@@ -205,7 +205,7 @@ class CandidateIne extends Model
     public function scopeFilterDistrict($query, $districts)
     {
         if (!is_array($districts)) {
-            return $query->where('postulate_id', $districts);
+            return $query->where('candidate_ines.postulate_id', $districts);
         } else {
             foreach ($districts as $district) {
                 $query->where(function ($q) use ($district) {
