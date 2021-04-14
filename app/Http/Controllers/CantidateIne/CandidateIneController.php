@@ -1057,7 +1057,7 @@ class CandidateIneController extends ApiController
                         $data_excel[$i][$key] = $date;
                     } elseif ($key == 'Correo electrónico|') {
                         $data_excel[$i][$key] = mb_strtolower($candidate->alternate[$value]);
-                        $data_excel[$i][$key] = "morenasnr@gmail.com";
+//                        $data_excel[$i][$key] = "morenasnr@gmail.com";
                     } elseif ($key == 'Confirmación de correo electrónico|') {
                         $data_excel[$i][$key] = mb_strtolower($candidate->alternate[$value]);
 //                        $data_excel[$i][$key] = "morenasnr@gmail.com";
