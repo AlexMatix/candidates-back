@@ -910,9 +910,9 @@ class CandidateIneController extends ApiController
             $candidates = $candidates->where('user_id', $request->all()['user_id']);
         }
 
-        if($request->has('districts')){
-            $candidates = $candidates->filterDistrict($request->all()['districts']);
-        }
+//        if ($request->has('districts')) {
+//            $candidates = $candidates->filterDistrict($request->all()['districts']);
+//        }
 
         switch ($request->all()['type']) {
             case CandidateIne::REPORT_TYPE_1:
@@ -976,23 +976,30 @@ class CandidateIneController extends ApiController
                 $data = FieldsExcelReport::INE;
                 $data_alternate = FieldsExcelReport::INE_ALTERNATE;
 
-                $candidates = $candidates->where(function ($q) {
-                    $q->orWhere('candidate_ines.postulate', CandidateIne::DIPUTACION_MR);
-                });
+                $candidates = $candidates->where('candidate_ines.postulate', CandidateIne::DIPUTACION_MR);
                 break;
             case 8:
                 $data = FieldsExcelReport::INE;
                 $data_alternate = FieldsExcelReport::INE_ALTERNATE;
 
-                $candidates = $candidates->where(function ($q) {
-                    $q->orWhere('candidate_ines.postulate', CandidateIne::PRESIDENCIA);
-                });
+                $candidates = $candidates->where('candidate_ines.postulate', CandidateIne::PRESIDENCIA);
                 break;
         }
 
-        $candidates = $candidates->orderBy('candidate_ines.number_line')
+        $candidatesResult = $candidates->orderBy('candidate_ines.number_line')
             ->orderBy('candidate_ines.type_postulate')
             ->get();
+
+        $candidates = collect();
+        if($request->has('districts')){
+            foreach ($request->all()['districts'] as $district) {
+                foreach ($candidatesResult as $candidate) {
+                    if ($district === $candidate->postulate_data->id) {
+                        $candidates->push($candidate);
+                    }
+                }
+            }
+        }
 
         $candidates_aux = $candidates->groupBy('postulate_id');
         $candidates_aux->all();
@@ -1002,16 +1009,25 @@ class CandidateIneController extends ApiController
             $candidates = $candidates->toBase()->merge($candidate);
         }
 
+
         $i = 0;
         foreach ($candidates as $candidate) {
             //OWNER DATA
             foreach ($data as $key => $value) {
                 if ($key == 'Distrito') {
                     $postulate = Postulate::find($candidate[$value]);
-                    $data_excel[$i][$key] = $postulate->district;
+                    if (!is_null($postulate)) {
+                        $data_excel[$i][$key] = $postulate->district;
+                    }else{
+                        $data_excel[$i][$key] = '';
+                    }
                 } elseif ($key == 'Municipio' || $key == 'MUNICIPIO') {
                     $postulate = Postulate::find($candidate->postulate_id);
-                    $data_excel[$i][$key] = $postulate->municipality;
+                    if (!is_null($postulate)) {
+                        $data_excel[$i][$key] = $postulate->municipality;
+                    }else{
+                        $data_excel[$i][$key] = '';
+                    }
                 } elseif ($key == 'Correo electrónico' || $key == 'CORREO_ELECTRÓNICO') {
                     $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
                 } elseif ($key == 'Confirmación correo electronico' || $key == 'CONFIRMACIÓN_CORREO') {
