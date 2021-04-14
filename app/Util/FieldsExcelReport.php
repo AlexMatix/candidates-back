@@ -105,6 +105,7 @@ class FieldsExcelReport
         "Circunscripción" => "circumscription",
         "Distrito" => "postulate_id",
         "Municipio" => "municipality",
+        "Partido" => "politic_party_id",
         "Localidad" => "locality",
         "Demarcación" => "demarcation",
         "Juntas Municipales" => "municipalities_council",

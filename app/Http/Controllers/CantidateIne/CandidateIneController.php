@@ -896,6 +896,7 @@ class CandidateIneController extends ApiController
 
         $this->validate($request, $rules);
 
+        $candidates_all = collect();
         $candidates = CandidateIne::joinCandidates()->getOwner()->skipFields('Pendiente', -1);
 
         if ($request->has('politic_party_id')) {
@@ -910,9 +911,9 @@ class CandidateIneController extends ApiController
             $candidates = $candidates->where('user_id', $request->all()['user_id']);
         }
 
-//        if ($request->has('districts')) {
-//            $candidates = $candidates->filterDistrict($request->all()['districts']);
-//        }
+        if ($request->has('districts')) {
+            $candidates = $candidates->filterDistrict($request->all()['districts']);
+        }
 
         switch ($request->all()['type']) {
             case CandidateIne::REPORT_TYPE_1:
@@ -986,20 +987,9 @@ class CandidateIneController extends ApiController
                 break;
         }
 
-        $candidatesResult = $candidates->orderBy('candidate_ines.number_line')
+        $candidates = $candidates->orderBy('candidate_ines.number_line')
             ->orderBy('candidate_ines.type_postulate')
             ->get();
-
-        $candidates = collect();
-        if($request->has('districts')){
-            foreach ($request->all()['districts'] as $district) {
-                foreach ($candidatesResult as $candidate) {
-                    if ($district === $candidate->postulate_data->id) {
-                        $candidates->push($candidate);
-                    }
-                }
-            }
-        }
 
         $candidates_aux = $candidates->groupBy('postulate_id');
         $candidates_aux->all();
@@ -1009,55 +999,54 @@ class CandidateIneController extends ApiController
             $candidates = $candidates->toBase()->merge($candidate);
         }
 
-
         $i = 0;
         foreach ($candidates as $candidate) {
-            //OWNER DATA
-            foreach ($data as $key => $value) {
-                if ($key == 'Distrito') {
-                    $postulate = Postulate::find($candidate[$value]);
-                    if (!is_null($postulate)) {
-                        $data_excel[$i][$key] = $postulate->district;
-                    }else{
-                        $data_excel[$i][$key] = '';
-                    }
-                } elseif ($key == 'Municipio' || $key == 'MUNICIPIO') {
-                    $postulate = Postulate::find($candidate->postulate_id);
-                    if (!is_null($postulate)) {
-                        $data_excel[$i][$key] = $postulate->municipality;
-                    }else{
-                        $data_excel[$i][$key] = '';
-                    }
-                } elseif ($key == 'Correo electrónico' || $key == 'CORREO_ELECTRÓNICO') {
-                    $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
-                } elseif ($key == 'Confirmación correo electronico' || $key == 'CONFIRMACIÓN_CORREO') {
-                    $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
-                } elseif ($key == 'Tipo de residencia en meses' || $key == 'TIEMPO_RESIDENCIA_MESES') {
-                    $data_excel[$i][$key] = "";
-                } elseif ($key == 'Tipo candidatura' || $key == 'TIPO_CANDIDATURA') {
-                    $reportCandidate = [
-                        "1" => 8,
-                        "2" => 7,
-                        "3" => 28,
-                        "4" => 26,
-                        "5" => 9,
-                    ];
-                    $data_excel[$i][$key] = $reportCandidate[$candidate[$value]];
-                } elseif ($key == 'Fecha de nacimiento' || $key == 'FECHA_NACIMIENTO') {
-                    $date = date("d-m-Y", strtotime($candidate[$value]));
-                    $data_excel[$i][$key] = $date;
-                } elseif ($key == 'Sexo' || $key == 'SEXO') {
-                    $data_excel[$i][$key] = $candidate[$value] === 'HOMBRE' ? 'H' : 'M';
-                } elseif ($key == 'PARTIDO' || $key == 'Partido') {
-                    $politic_party = PoliticParty::find($candidate->politic_party_id);
-                    $data_excel[$i][$key] = $politic_party->name;
-                } else {
-                    $data_excel[$i][$key] = $candidate[$value];
-                }
-            }
-
-            //ALTERNATE DATA
             if (!is_null($candidate->alternate)) {
+                //OWNER DATA
+                foreach ($data as $key => $value) {
+                    if ($key == 'Distrito') {
+                        $postulate = Postulate::find($candidate[$value]);
+                        if (!is_null($postulate)) {
+                            $data_excel[$i][$key] = $postulate->district;
+                        } else {
+                            $data_excel[$i][$key] = '';
+                        }
+                    } elseif ($key == 'Municipio' || $key == 'MUNICIPIO') {
+                        $postulate = Postulate::find($candidate->postulate_id);
+                        if (!is_null($postulate)) {
+                            $data_excel[$i][$key] = $postulate->municipality;
+                        } else {
+                            $data_excel[$i][$key] = '';
+                        }
+                    } elseif ($key == 'Correo electrónico' || $key == 'CORREO_ELECTRÓNICO') {
+                        $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
+                    } elseif ($key == 'Confirmación correo electronico' || $key == 'CONFIRMACIÓN_CORREO') {
+                        $data_excel[$i][$key] = mb_strtolower($candidate[$value]);
+                    } elseif ($key == 'Tipo de residencia en meses' || $key == 'TIEMPO_RESIDENCIA_MESES') {
+                        $data_excel[$i][$key] = "";
+                    } elseif ($key == 'Tipo candidatura' || $key == 'TIPO_CANDIDATURA') {
+                        $reportCandidate = [
+                            "1" => 8,
+                            "2" => 7,
+                            "3" => 28,
+                            "4" => 26,
+                            "5" => 9,
+                        ];
+                        $data_excel[$i][$key] = $reportCandidate[$candidate[$value]];
+                    } elseif ($key == 'Fecha de nacimiento' || $key == 'FECHA_NACIMIENTO') {
+                        $date = date("d-m-Y", strtotime($candidate[$value]));
+                        $data_excel[$i][$key] = $date;
+                    } elseif ($key == 'Sexo' || $key == 'SEXO') {
+                        $data_excel[$i][$key] = $candidate[$value] === 'HOMBRE' ? 'H' : 'M';
+                    } elseif ($key == 'PARTIDO' || $key == 'Partido') {
+                        $politic_party = PoliticParty::find($candidate->politic_party_id);
+                        $data_excel[$i][$key] = $politic_party->name;
+                    } else {
+                        $data_excel[$i][$key] = $candidate[$value];
+                    }
+                }
+
+                //ALTERNATE DATA
                 foreach ($data_alternate as $key => $value) {
                     if ($key == 'Registra suplencia|') {
                         $data_excel[$i][$key] = 1;
@@ -1085,8 +1074,8 @@ class CandidateIneController extends ApiController
                         $data_excel[$i][$key] = $candidate->alternate[$value];
                     }
                 }
+                $i++;
             }
-            $i++;
         }
 
         foreach (array_keys($data_alternate) as $item) {
