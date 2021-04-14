@@ -35,6 +35,7 @@ Route::get('validate_elector_ocr', 'Candidate\CandidateController@validateOCR');
 Route::get('getAyuntamiento/{postulate}', 'Candidate\CandidateController@getAyuntamiento');
 Route::post('importLayout', 'Candidate\CandidateController@importLayout');
 Route::get('reportCityHall', 'Candidate\CandidateController@getReportCityHall');
+Route::get('getStatics', 'Candidate\CandidateController@getStatics');
 
 Route::put('changePoliticParty','Candidate\CandidateController@changePoliticParty');
 //END CANDIDATE RUTE
