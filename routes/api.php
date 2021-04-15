@@ -36,6 +36,7 @@ Route::get('getAyuntamiento/{postulate}', 'Candidate\CandidateController@getAyun
 Route::post('importLayout', 'Candidate\CandidateController@importLayout');
 Route::get('reportCityHall', 'Candidate\CandidateController@getReportCityHall');
 Route::get('getStatics', 'Candidate\CandidateController@getStatics');
+Route::get('getRecords', 'Candidate\CandidateController@getRecords');
 
 Route::put('changePoliticParty','Candidate\CandidateController@changePoliticParty');
 //END CANDIDATE RUTE

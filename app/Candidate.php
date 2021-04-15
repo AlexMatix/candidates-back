@@ -129,15 +129,38 @@ class Candidate extends Model
         return $query;
     }
 
-    public function scopeGetByUser($query, $user_id){
+    public function scopeGetByUser($query, $user_id)
+    {
         return $query->where('user_id', $user_id);
     }
 
-    public function scopeGetByType($query, $types){
+    public function scopeGetByType($query, $types)
+    {
         return $query->where('postulate', $types);
     }
 
-    public function scopeGetByMunicipality($query, $postulate_id){
+    public function scopeGetByMunicipality($query, $postulate_id)
+    {
         return $query->where('postulate_id', $postulate_id);
+    }
+
+    public function scopeGetNoPoliticParty($query, $data, $exclude = true)
+    {
+        $exclude_ids = [];
+        foreach ($data as $datum) {
+            $candidate = Candidate::where('postulate_id', $datum['postulate_id'])
+                ->where('politic_party_id', $datum['politic_party_id'])
+                ->where('user_id', $datum['user_id'])
+                ->select('id')
+                ->get();
+
+            $exclude_ids = array_merge($exclude_ids, array_column($candidate->toArray(), 'id'));
+        }
+
+        if($exclude){
+            return $query->whereNotIn('id', $exclude_ids);
+        }else{
+            return $query->whereIn('id', $exclude_ids);
+        }
     }
 }

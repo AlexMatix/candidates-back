@@ -704,11 +704,11 @@ class CandidateController extends ApiController
                 ->get();
 
             $i = 0;
-            foreach ($query as $q){
-                if(!is_null($q['postulate_id'])){
+            foreach ($query as $q) {
+                if (!is_null($q['postulate_id'])) {
                     $postulate = Postulate::find($q['postulate_id']);
                     $data[$i]['Municipio'] = $postulate->municipality;
-                }else{
+                } else {
                     $data[$i]['Municipio'] = '';
                 }
 
@@ -731,7 +731,7 @@ class CandidateController extends ApiController
 
             $report = new ExportExcel($path . 'basic.xlsx');
             $report->createExcel($data, ['Municipio', 'Partido', 'Tipo candidatura', 'Conteo']);
-        }elseif($request->all()['type'] == 2){
+        } elseif ($request->all()['type'] == 2) {
             $query = Candidate::groupBy('politic_party_id', 'postulate_id')
                 ->select('postulate_id', 'politic_party_id', DB::raw('count(postulate)'))
                 ->orderBy('postulate_id')
@@ -739,11 +739,11 @@ class CandidateController extends ApiController
                 ->get();
 
             $i = 0;
-            foreach ($query as $q){
-                if(!is_null($q['postulate_id'])){
+            foreach ($query as $q) {
+                if (!is_null($q['postulate_id'])) {
                     $postulate = Postulate::find($q['postulate_id']);
                     $data[$i]['Municipio'] = $postulate->municipality;
-                }else{
+                } else {
                     $data[$i]['Municipio'] = '';
                 }
 
@@ -760,5 +760,59 @@ class CandidateController extends ApiController
         }
 
         return $this->downloadFile($path . 'basic.xlsx');
+    }
+
+    public function getRecords(Request $request)
+    {
+        $rules = [
+            'type' => 'required',
+            'data' => 'required'
+        ];
+
+        $data = [];
+        $path = Storage::path('reports/');
+        if ($request->get('type') == 1) {
+            $query = Candidate::getNoPoliticParty($request->all()['data'])
+                ->groupBy('politic_party_id')
+                ->select('politic_party_id', DB::raw('count(politic_party_id)'))
+                ->get();
+
+            foreach ($query as $q) {
+                $politic_party = PoliticParty::find($q->politic_party_id);
+                $q->politic_party = $politic_party->name;
+            }
+        } elseif ($request->get('type') == 2) {
+            $query = Candidate::getNoPoliticParty($request->all()['data'], false)
+                ->count();
+        } elseif ($request->get('type') == 3) {
+            $query = Candidate::getNoPoliticParty($request->all()['data'])
+                ->getOwner();
+            $query = $query->where(function ($q) {
+                $q->orWhere('postulate', CandidateIne::SINDICATURA)
+                    ->orWhere('postulate', CandidateIne::REGIDURIA)
+                    ->orWhere('postulate', CandidateIne::PRESIDENCIA);
+            });
+            $query = $query->orderBy('postulate_id')->orderBy('politic_party_id')->get();
+
+            $i = 0;
+            foreach ($query as $q) {
+                $postulate = Postulate::find($q->postulate_id);
+                $politic_party = PoliticParty::find($q->politic_party_id);
+
+                $data[$i]['Municipio'] = $postulate->municipality;
+                $data[$i]['Distrito'] = $postulate->district;
+                $data[$i]['Tipo'] = $q->postulate;
+                $data[$i]['Partido'] = $politic_party->name;
+
+                $i++;
+            }
+
+            $report = new ExportExcel($path . 'basic.xlsx');
+            $report->createExcel($data, ['Municipio', 'Distrito', 'Tipo', 'Partido']);
+
+            return $this->downloadFile($path . 'basic.xlsx');
+        }
+
+        return $this->showList($query);
     }
 }
