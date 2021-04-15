@@ -50,7 +50,7 @@ class CandidateController extends ApiController
                     ->searchInFields('birthplace', $request->all()['value'])
                     ->searchInFields('occupation', $request->all()['value'])
                     ->searchInFields('re_election', $request->all()['value'])
-                    ->searchInFields('indigenous_group', $request->all()['value'])
+                    ->searchInFields('indigenous_l', $request->all()['value'])
                     ->searchInFields('group_sexual_diversity', $request->all()['value'])
                     ->searchInFields('disabled_group', $request->all()['value']);
             });
@@ -770,6 +770,7 @@ class CandidateController extends ApiController
         ];
 
         $data = [];
+        $data_district = [];
         $path = Storage::path('reports/');
         if ($request->get('type') == 1) {
             $query = Candidate::getNoPoliticParty($request->all()['data'])
@@ -785,14 +786,21 @@ class CandidateController extends ApiController
             $query = Candidate::getNoPoliticParty($request->all()['data'], false)
                 ->count();
         } elseif ($request->get('type') == 3) {
-            $query = Candidate::getNoPoliticParty($request->all()['data'])
-                ->getOwner();
+            $query = Candidate::getNoPoliticParty($request->all()['data'])->getOwner();
             $query = $query->where(function ($q) {
                 $q->orWhere('postulate', CandidateIne::SINDICATURA)
                     ->orWhere('postulate', CandidateIne::REGIDURIA)
                     ->orWhere('postulate', CandidateIne::PRESIDENCIA);
             });
-            $query = $query->orderBy('postulate_id')->orderBy('politic_party_id')->get();
+            $query = $query->orderBy('postulate_id')->get();
+
+            $no_politic_party = Candidate::getNoPoliticParty($request->all()['data'], false)->getOwner();
+            $no_politic_party = $no_politic_party->where(function ($q) {
+                $q->orWhere('postulate', CandidateIne::SINDICATURA)
+                    ->orWhere('postulate', CandidateIne::REGIDURIA)
+                    ->orWhere('postulate', CandidateIne::PRESIDENCIA);
+            });
+            $no_politic_party = $no_politic_party->orderBy('postulate_id')->get();
 
             $i = 0;
             foreach ($query as $q) {
@@ -806,10 +814,21 @@ class CandidateController extends ApiController
 
                 $i++;
             }
+            foreach ($no_politic_party as $q) {
+                $postulate = Postulate::find($q->postulate_id);
+
+                $data[$i]['Municipio'] = $postulate->municipality;
+                $data[$i]['Distrito'] = $postulate->district;
+                $data[$i]['Tipo'] = $q->postulate;
+                $data[$i]['Partido'] = 'Vía Libre';
+
+                $i++;
+            }
+
+            return $this->showList($data);
 
             $report = new ExportExcel($path . 'basic.xlsx');
-            $report->createExcel($data, ['Municipio', 'Distrito', 'Tipo', 'Partido']);
-
+            $report->createExcel($data, ['Municipio', 'Partido', 'Conteo']);
             return $this->downloadFile($path . 'basic.xlsx');
         }
 
