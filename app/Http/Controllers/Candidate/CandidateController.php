@@ -786,30 +786,26 @@ class CandidateController extends ApiController
             $query = Candidate::getNoPoliticParty($request->all()['data'], false)
                 ->count();
         } elseif ($request->get('type') == 3) {
-            $query = Candidate::getNoPoliticParty($request->all()['data'])->getOwner();
-            $query = $query->where(function ($q) {
-                $q->orWhere('postulate', CandidateIne::SINDICATURA)
-                    ->orWhere('postulate', CandidateIne::REGIDURIA)
-                    ->orWhere('postulate', CandidateIne::PRESIDENCIA);
-            });
-            $query = $query->orderBy('postulate_id')->get();
+            $query = Candidate::getNoPoliticParty($request->all()['data'])->getOwner()->orderBy('postulate_id')->get();
+            $no_politic_party = Candidate::getNoPoliticParty($request->all()['data'], false)->getOwner()->orderBy('postulate_id')->get();
 
-            $no_politic_party = Candidate::getNoPoliticParty($request->all()['data'], false)->getOwner();
-            $no_politic_party = $no_politic_party->where(function ($q) {
-                $q->orWhere('postulate', CandidateIne::SINDICATURA)
-                    ->orWhere('postulate', CandidateIne::REGIDURIA)
-                    ->orWhere('postulate', CandidateIne::PRESIDENCIA);
-            });
-            $no_politic_party = $no_politic_party->orderBy('postulate_id')->get();
+            $reportCandidate = [
+                "1" => 8,
+                "2" => 7,
+                "3" => 28,
+                "4" => 26,
+                "5" => 9,
+            ];
 
             $i = 0;
             foreach ($query as $q) {
                 $postulate = Postulate::find($q->postulate_id);
                 $politic_party = PoliticParty::find($q->politic_party_id);
 
-                $data[$i]['Municipio'] = $postulate->municipality;
-                $data[$i]['Distrito'] = $postulate->district;
-                $data[$i]['Tipo'] = $q->postulate;
+                $data[$i]['Municipio'] = $postulate->municipality ?? '';
+                $data[$i]['Distrito'] = $postulate->district ?? '';
+
+                $data[$i]['Tipo'] = $reportCandidate[$q->postulate];
                 $data[$i]['Partido'] = $politic_party->name;
 
                 $i++;
@@ -817,19 +813,34 @@ class CandidateController extends ApiController
             foreach ($no_politic_party as $q) {
                 $postulate = Postulate::find($q->postulate_id);
 
-                $data[$i]['Municipio'] = $postulate->municipality;
-                $data[$i]['Distrito'] = $postulate->district;
-                $data[$i]['Tipo'] = $q->postulate;
+                $data[$i]['Municipio'] = $postulate->municipality ?? '';
+                $data[$i]['Distrito'] = $postulate->district ?? '';
+                $data[$i]['Tipo'] = $reportCandidate[$q->postulate];
                 $data[$i]['Partido'] = 'Vía Libre';
 
                 $i++;
             }
 
-            return $this->showList($data);
-
             $report = new ExportExcel($path . 'basic.xlsx');
             $report->createExcel($data, ['Municipio', 'Partido', 'Conteo']);
             return $this->downloadFile($path . 'basic.xlsx');
+
+        } elseif ($request->get('type') == 4) {
+            $data = [];
+            for ($i = 1; $i <= 26; $i++) {
+                $postulates = Postulate::where('district', $i)->count();
+
+                $candidate = Candidate::join('postulates', 'candidates.postulate_id', '=', 'postulates.id')
+                    ->select(DB::raw('count(distinct(candidates.postulate_id)) as count'))
+                    ->where('postulates.district', $i)
+                    ->first();
+
+                $data[$i]['Distrito'] = $i;
+                $data[$i]['Con Partido'] = $candidate['count'];
+                $data[$i]['Sin Partido'] = $postulates - $candidate['count'];
+            }
+
+
         }
 
         return $this->showList($query);
